@@ -2,7 +2,7 @@
 
 An individual React + TypeScript assignment for arithmetic practice for children ages 7–12.
 
-**Current scope: Phase 1 — Project Setup.** The app displays a welcoming foundation screen. Practice, routing, storage, statistics, and settings behavior will be added in later phases. This is not the finished assignment or a deployed release.
+**Current scope: Phases 1–2 — Project Setup and Basic Interface.** The app has a responsive home page, shared header/navigation, and all specified routes. The home actions open clearly marked placeholder pages. Practice configuration, question sessions, persistence, statistics, and settings behavior will be added in later phases. This is not the finished assignment or a deployed release.
 
 Repository: https://github.com/Hab1yer/math-practice-app (private during development). The instructor will need repository access before submission.
 
@@ -36,9 +36,9 @@ Original reference Markdown is excluded from automatic formatting to preserve it
 
 ## Project structure
 
-- `src/app`: root application component and its component test.
-- `src/components`: reusable interface components (reserved).
-- `src/pages`: route-level screens (reserved).
+- `src/app`: root application component, route definitions, and navigation tests.
+- `src/components/layout`: shared header, navigation, page container, and app layout.
+- `src/pages`: home page, reusable coming-soon page, and unknown-route fallback.
 - `src/services`: question generation, statistics, and storage services (reserved).
 - `src/hooks`: reusable React hooks (reserved).
 - `src/types`: shared question, session, mistake, statistics, and settings contracts.
@@ -58,6 +58,10 @@ Both references were extracted from https://chatgpt.com/share/6acc2af2-7d74-83ea
 
 ## Next phase
 
-Phase 2 adds shared page layout, the home page actions, React Router, and route placeholders. All practice functionality remains on the checklist for later phases.
+Phase 3 adds operation, difficulty, session-length, and review-mode selection on the practice setup page. All practice functionality remains on the checklist for later phases.
+
+## Navigation
+
+React Router serves `/`, `/practice/setup`, `/practice/session`, `/practice/summary`, `/statistics`, and `/settings`, with a fallback for unknown paths. Native links styled as buttons support keyboard navigation and browser history. Page changes update the browser title and move focus to the new heading; a skip link bypasses the header. The development server supports direct-route refreshes. Production hosting still requires an SPA fallback before release.
 
 There is no backend, login, analytics, or collection of personal data. Persistence is planned for browser localStorage in Phase 9. Final deployment should build from repository root and publish `dist/`, with SPA routing configured when routing exists.

@@ -29,4 +29,20 @@ The example transcript PDF and original assignment text are not present. This lo
 - Marked only the 21 verified Phase 1 checklist items complete. Phase 2 onward and all final-release checks remain pending.
 - Verification was performed by the agent. Gavin has not yet performed his own checks. No app deployment occurred.
 
-Next: commit the verified foundation and push it, reporting the exact final commit and push outcome in the chat. Phase 2 is the next implementation task.
+The verified foundation was committed and pushed as `6d8638c`. The remote main branch matched the local commit.
+
+## 2026-10-15 — Phase 2: Basic Interface
+
+User prompt: “proceed”, continuing the next phase identified in the previous result.
+
+- Read the exact Phase 2 checklist and inspected the clean workspace before editing.
+- Installed React Router. npm reported zero vulnerabilities.
+- Added shared header, navigation, reusable page container, and layout. Continued the green/cream/yellow design with large home actions and responsive spacing.
+- Added Start Practice, View Statistics, and Settings links styled as buttons. All six specified routes resolve, and unknown routes offer a way home. Later features use honest coming-soon pages rather than invented progress or inactive controls.
+- Added a skip link, active navigation state, route titles, and focus movement to each page heading. Native links support keyboard activation and browser history.
+- Replaced the original foundation test with seven navigation tests covering all home actions, return-home behavior, session/summary direct routes, unknown-route recovery, active navigation, keyboard activation, and heading focus.
+- `npm run check` passed: lint, formatting, seven tests, and strict TypeScript/production build. JavaScript: 264.18 kB (83.63 kB gzip); CSS: 4.44 kB (1.55 kB gzip).
+- Agent browser checks: all three home actions and return-home navigation worked; `/statistics` survived refresh; unknown routes recovered to home. Tab reached all three home actions and Enter opened Settings.
+- Inspected desktop and a 390 × 844 viewport. The home actions stacked on the narrow screen; document width equaled scroll width (375 CSS pixels with scrollbar), with no horizontal overflow. Reset the viewport afterward. This does not substitute for later real-device or cross-browser testing.
+- The live browser captured one transient Vite stylesheet reload error while the stylesheet file was being replaced. The completed stylesheet built successfully; a fresh-page browser check is recorded in TESTING.md.
+- Only Phase 2 checkboxes are updated after verification. Phase 3 onward remains pending; no deployment or practice-data behavior was added.
