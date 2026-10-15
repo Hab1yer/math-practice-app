@@ -47,4 +47,13 @@ To reproduce current checks, run `npm run check` and `npm run dev`. The combined
 - Actual debugging: a new sparse-answer-array regression test failed before the fix (one failed, 25 passed in the validator file). Spreading the array before validating its entries closes the hole-skipping behavior of Array.every.
 - Final `npm run check`: passed lint, formatting, 85 tests across seven files, and strict TypeScript/production build. Browser checks were not repeated because this phase adds service logic without connecting it to the interface.
 
-Later question sessions, persistence, full accessibility, real-device, and cross-browser flows remain untested and unimplemented. Gavin's own manual verification has not been performed by the agent.
+## Phase 5
+
+- `npm run check`: passed lint, formatting, 118 tests across eight files, and strict TypeScript/production build.
+- Added 33 tests for answer-choice generation: three distinct incorrect answers, exactly one correct answer in four choices, whole-number/nonnegative filtering, zero/one/max-answer cases, operation-specific mistake candidates, and immutability.
+- Constant-randomness tests verify that duplicate-heavy candidate sets finish with bounded work. The nearby scan is limited to six offsets in either direction; no unbounded random retries are used.
+- A seeded 4,000-choice sample passes the broad correct-position balance check (all four positions between 800 and 1,200 placements). This is a reproducible regression check, not a proof of statistical randomness.
+- The existing 8,000 generated-question samples pass with the new choice service integrated. Broken-randomness fallback tests continue to pass.
+- Interface behavior is unchanged; no new manual browser checks are claimed.
+
+Later question cards/sessions, persistence, full accessibility, real-device, and cross-browser flows remain untested and unimplemented. Gavin's own manual verification has not been performed by the agent.

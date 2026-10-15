@@ -4,9 +4,9 @@ import type {
   Question,
 } from '../types/question';
 import { randomInteger } from '../utils/math';
-import { shuffle } from '../utils/shuffle';
 import { createId } from '../utils/ids';
 import { isValidQuestion } from '../utils/validation';
+import { generateAnswerChoices } from './answerChoices';
 import {
   arithmeticSymbols,
   difficultyRules,
@@ -68,7 +68,7 @@ function buildQuestion(
         : operation === 'multiplication'
           ? a * b
           : a / b;
-  // Basic neighboring choices satisfy the contract; Phase 5 adds operation-specific distractors.
+  // Emergency choices avoid a broken random source after bounded generation retries.
   const choices = [
     correctAnswer,
     correctAnswer + 1,
@@ -82,7 +82,14 @@ function buildQuestion(
     secondOperand: b,
     displayText: `${a} ${arithmeticSymbols[operation]} ${b} = ?`,
     correctAnswer,
-    choices: fallback ? choices : shuffle(choices),
+    choices: fallback
+      ? choices
+      : generateAnswerChoices({
+          operation,
+          firstOperand: a,
+          secondOperand: b,
+          correctAnswer,
+        }),
     difficulty,
     source: 'regular',
   };

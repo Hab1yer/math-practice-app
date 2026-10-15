@@ -81,3 +81,19 @@ User prompt: “proceed”, continuing the next phase identified in the precedin
 - Fixed the validator by spreading the choices before checking every entry; missing slots become undefined and are rejected. Reran the full check to verify the fix and the existing behavior. Final results are recorded in TESTING.md.
 - Final `npm run check` passed lint, formatting, 85 tests across seven files, and strict TypeScript/production build. The production bundle is unchanged because the generator is not imported by the current interface.
 - No browser interaction was needed for this service-only phase. The existing interface has no new question controls, and no new manual browser verification is claimed.
+
+Phase 4 was committed and pushed as `aa9fd8a`; remote main matched the local commit.
+
+## 2026-10-15 — Phase 5: Multiple-Choice Answers
+
+User prompt: “proceed”, continuing the next phase named in the previous result.
+
+- Inspected the clean repository, exact Phase 5 checklist, question generator, and validation before editing.
+- Added a dedicated answer-choice service and connected it to normal question generation. It returns three unique incorrect answers and shuffles those with the correct answer.
+- Added operation-specific candidates for carry/borrow errors, confusing operands/operations, neighboring multiplication facts, neighboring quotients, and integer neighboring-divisor facts. Plausibility windows discard overly distant alternatives; all candidates must be nonnegative safe integers distinct from the answer.
+- Uses a finite candidate pool and a nearby scan capped at six offsets per direction rather than repeatedly drawing random numbers until they differ. This provides the checklist's bounded retry behavior even with constant randomness or many duplicate candidates.
+- Preserved the emergency deterministic fallback for a broken random source. Invalid input arithmetic is rejected, and existing input objects are not modified.
+- Added 33 answer-choice tests, including 16 arithmetic edge cases sampled 50 times each, recognizable operation-specific errors, fractional rejection, zero answers, bounded work under constant randomness, and safe integer limits.
+- A seeded 4,000-choice sample verifies that all four positions receive the correct answer with broad balance (each between 800 and 1,200). Existing 8,000 generated-question samples exercise the integrated service as well.
+- `npm run check` passed lint, formatting, 118 tests across eight files, and strict TypeScript/production build. No new dependencies were needed. This phase required no debugging fixes after the first full check.
+- Only the 18 verified Phase 5 checklist items are completed. Question-card interaction remains Phase 6. This service-only phase did not alter the current interface; browser checks were not repeated or claimed.
