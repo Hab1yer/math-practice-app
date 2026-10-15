@@ -6,6 +6,13 @@ import type {
 
 export type SessionLength = 5 | 10 | 20 | 'continuous';
 
+export interface PracticeConfiguration {
+  operations: MathOperation[];
+  difficulty: DifficultyLevel;
+  sessionLength: SessionLength;
+  mode: QuestionSource;
+}
+
 export interface PracticeAttempt {
   id: string;
   questionId: string;

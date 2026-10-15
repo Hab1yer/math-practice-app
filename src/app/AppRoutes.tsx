@@ -3,30 +3,16 @@ import AppLayout from '../components/layout/AppLayout';
 import HomePage from '../pages/HomePage';
 import ComingSoonPage from '../pages/ComingSoonPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import PracticeSetupPage from '../pages/PracticeSetupPage';
+import PracticeSessionPage from '../pages/PracticeSessionPage';
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route element={<AppLayout />}>
         <Route index element={<HomePage />} />
-        <Route
-          path="practice/setup"
-          element={
-            <ComingSoonPage
-              title="Choose your practice"
-              description="Your math adventure will start here."
-            />
-          }
-        />
-        <Route
-          path="practice/session"
-          element={
-            <ComingSoonPage
-              title="Your practice space"
-              description="A place to explore one question at a time."
-            />
-          }
-        />
+        <Route path="practice/setup" element={<PracticeSetupPage />} />
+        <Route path="practice/session" element={<PracticeSessionPage />} />
         <Route
           path="practice/summary"
           element={

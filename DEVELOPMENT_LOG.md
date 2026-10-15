@@ -46,3 +46,20 @@ User prompt: “proceed”, continuing the next phase identified in the previous
 - Inspected desktop and a 390 × 844 viewport. The home actions stacked on the narrow screen; document width equaled scroll width (375 CSS pixels with scrollbar), with no horizontal overflow. Reset the viewport afterward. This does not substitute for later real-device or cross-browser testing.
 - The live browser captured one transient Vite stylesheet reload error while the stylesheet file was being replaced. The completed stylesheet built successfully; a fresh-page browser check is recorded in TESTING.md.
 - Only Phase 2 checkboxes are updated after verification. Phase 3 onward remains pending; no deployment or practice-data behavior was added.
+
+Phase 2 was committed and pushed as `6932e6f`; remote main matched the local commit.
+
+## 2026-10-15 — Phase 3: Practice Configuration
+
+User prompt: “proceed”, continuing with the next phase identified in the prior response.
+
+- Inspected the clean repository and exact Phase 3 checklist before editing.
+- Added separate native checkbox/radio selector components with visible selected states, four operations, a Select All shortcut, four difficulty levels with descriptions, and 5/10/20/continuous session lengths.
+- Defaults: addition, Beginner, 10 questions, regular practice. Empty operation selection disables Start Session and displays an associated live validation message.
+- Included regular practice and a disabled mistake-review option with an explanation. There is no persisted history or eligible mistake source yet; later mistake tracking/review phases must connect it to actual data.
+- Added a typed PracticeConfiguration and React Context provider. Submitting passes the configuration to the practice route. That page displays the actual choices and states that questions are coming soon; returning to setup restores submitted choices for editing.
+- No question generation, attempts, persistence, or scoring was added. Unsubmitted edits and refresh recovery are not persisted. A fresh/direct session visit without configuration offers a setup link.
+- Added five configuration tests and updated the seven navigation tests for the now-functional setup page. Tests cover defaults, empty-selection validation, Select All, mixed-operation handoff, exclusive difficulty/length choices, continuous/fixed lengths, editing submitted choices, keyboard checkboxes/radios, and direct session navigation.
+- `npm run check` passed: lint, formatting, 12 tests across two files, and strict TypeScript/production build. JavaScript: 271.04 kB (85.21 kB gzip); CSS: 7.53 kB (2.24 kB gzip).
+- Agent browser checks confirmed empty-selection validation, all four operations via Select All, Advanced + Continuous handoff, retained choices on return, and keyboard arrow selection of Intermediate. Desktop and 390 × 844 layout inspection showed no horizontal overflow (document/scroll widths both 390 CSS pixels). Viewport override was reset afterward.
+- Updated only verified Phase 3 checklist items. Phase 4 question generation is next. Gavin's own manual testing and final release verification remain pending.

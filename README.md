@@ -2,7 +2,7 @@
 
 An individual React + TypeScript assignment for arithmetic practice for children ages 7–12.
 
-**Current scope: Phases 1–2 — Project Setup and Basic Interface.** The app has a responsive home page, shared header/navigation, and all specified routes. The home actions open clearly marked placeholder pages. Practice configuration, question sessions, persistence, statistics, and settings behavior will be added in later phases. This is not the finished assignment or a deployed release.
+**Current scope: Phases 1–3 — Project Setup, Basic Interface, and Practice Configuration.** The app has a responsive home page, shared navigation, all specified routes, and a working setup form. Start Session passes the selected configuration to the practice page, which displays those choices and clearly explains that questions are coming soon. Question sessions, persistence, statistics, and settings behavior will be added in later phases. This is not the finished assignment or a deployed release.
 
 Repository: https://github.com/Hab1yer/math-practice-app (private during development). The instructor will need repository access before submission.
 
@@ -36,13 +36,14 @@ Original reference Markdown is excluded from automatic formatting to preserve it
 
 ## Project structure
 
-- `src/app`: root application component, route definitions, and navigation tests.
+- `src/app`: root application component, configuration provider, route definitions, and navigation tests.
 - `src/components/layout`: shared header, navigation, page container, and app layout.
-- `src/pages`: home page, reusable coming-soon page, and unknown-route fallback.
+- `src/components/practice`: operation, difficulty, and session-length selectors.
+- `src/pages`: home, practice setup, configuration preview, coming-soon pages, and unknown-route fallback.
 - `src/services`: question generation, statistics, and storage services (reserved).
-- `src/hooks`: reusable React hooks (reserved).
+- `src/hooks`: shared practice-configuration access.
 - `src/types`: shared question, session, mistake, statistics, and settings contracts.
-- `src/utils`: pure helpers (reserved).
+- `src/utils`: shared operation, difficulty, and session-length options.
 - `src/test`: shared test environment setup.
 
 The shared types follow the specification's field names, numeric difficulty levels (1–4), and self-reported scoring. `SessionLength` narrows the specification's general number to the selected 5/10/20 options plus `continuous`. Settings names are explicit implementation choices because the specification lists preferences without defining an interface. Dates are ISO strings; choices, positive thresholds, and other runtime constraints still need validation in later phases. Types alone do not validate stored JSON.
@@ -58,7 +59,13 @@ Both references were extracted from https://chatgpt.com/share/6acc2af2-7d74-83ea
 
 ## Next phase
 
-Phase 3 adds operation, difficulty, session-length, and review-mode selection on the practice setup page. All practice functionality remains on the checklist for later phases.
+Phase 4 adds question-generation utilities and generators for all four operations and difficulty levels. Answer choices and question cards follow in Phases 5–6.
+
+## Practice configuration
+
+The setup form defaults to addition, Beginner, 10 questions, and regular practice. Native checkboxes allow mixed operations; Select All chooses all four. Native radio groups enforce one difficulty and one session length. Start Session is disabled without an operation, with an explanatory message. Mistake review is disabled with an explanation until practice history exists and review is implemented.
+
+Submitted choices are held in React Context and displayed at `/practice/session`. Returning to setup restores those submitted choices for editing. They are not yet saved to localStorage; refreshing clears them, and leaving setup discards unsubmitted edits. A direct session visit without configuration provides a link to setup. No attempts or statistics are recorded yet. Settings-based defaults and refresh recovery remain for their scheduled phases.
 
 ## Navigation
 

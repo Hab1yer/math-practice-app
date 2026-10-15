@@ -32,4 +32,12 @@ To reproduce: run `npm ci`, then `npm run check`, then `npm run dev`. Inspect th
 
 To reproduce current checks, run `npm run check` and `npm run dev`. The combined check script has now been exercised successfully. `npm ci` and production-preview verification remain pending.
 
-Later practice, persistence, full accessibility, real-device, and cross-browser flows remain untested and unimplemented. Gavin's own manual verification has not been performed by the agent.
+## Phase 3
+
+- `npm run check`: passed lint, formatting, 12 tests across two files, and strict TypeScript/production build.
+- Five new tests cover setup defaults, unavailable review explanation, empty operation validation, Select All, mixed-operation configuration handoff, continuous and fixed lengths, exclusive radio selection, retained submitted choices for editing, native keyboard behavior, and a direct session visit without configuration.
+- Agent browser checks confirmed disabled Start Session with no operations, Select All, Advanced/Continuous handoff, and restoration of submitted choices for editing. Arrow-left on Advanced selected Intermediate and cleared Advanced.
+- Inspected the complete desktop and 390 × 844 setup layouts; no horizontal overflow (document width and scroll width both 390 pixels). Viewport override was reset. This was emulation, not a real-device test.
+- Submitted choices currently live in memory only. Refresh and unsubmitted-edit persistence are intentionally deferred. Starting does not generate questions or record attempts yet.
+
+Later question sessions, persistence, full accessibility, real-device, and cross-browser flows remain untested and unimplemented. Gavin's own manual verification has not been performed by the agent.

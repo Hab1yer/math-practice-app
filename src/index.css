@@ -256,7 +256,190 @@ main:focus {
 .skip-link:focus {
   top: 12px;
 }
+.setup-form {
+  margin-top: 40px;
+}
+.setup-section {
+  padding: 0;
+  margin: 0 0 32px;
+  border: 0;
+  min-width: 0;
+}
+.setup-section legend {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  padding: 0;
+}
+.section-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.section-intro p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.6;
+}
+.text-button {
+  font: inherit;
+  font-weight: bold;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--ink);
+  border-radius: 9px;
+  padding: 12px 14px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.text-button:hover {
+  background: var(--mint);
+}
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.operation-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.choice-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 94px;
+  padding: 18px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+}
+.choice-option:hover {
+  border-color: var(--ink);
+}
+.choice-option:has(input:checked) {
+  border-color: var(--ink);
+  background: #e8f2e9;
+}
+.choice-option:has(input:focus-visible) {
+  outline: 3px solid var(--ink);
+  outline-offset: 4px;
+}
+.choice-option input {
+  accent-color: var(--ink);
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  flex-shrink: 0;
+  cursor: inherit;
+}
+.choice-label {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.3;
+}
+.choice-description {
+  display: block;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #4b6157;
+  margin-top: 7px;
+}
+.operation-grid .choice-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+}
+.operation-grid .choice-label {
+  grid-column: 1 / -1;
+  font-size: 17px;
+}
+.operation-symbol {
+  font-size: 30px;
+  line-height: 22px;
+  text-align: right;
+}
+.choice-unavailable,
+.choice-unavailable:hover {
+  cursor: not-allowed;
+  border-color: var(--line);
+  background: #f1f1e8;
+  color: #58665f;
+}
+.field-hint {
+  font-size: 16px;
+  line-height: 1.65;
+  margin: 16px 0 0;
+}
+.validation-message {
+  color: #994222;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+}
+.validation-message:empty {
+  display: none;
+}
+.setup-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 22px;
+  border-top: 1px solid var(--line);
+  padding-top: 24px;
+}
+.setup-footer .field-hint {
+  max-width: 420px;
+  margin: 0;
+}
+button.button-link {
+  font-family: inherit;
+  margin: 0;
+  cursor: pointer;
+  color: var(--ink);
+}
+button.button-link:disabled {
+  background: #e1e1d5;
+  color: #58665f;
+  cursor: not-allowed;
+  transform: none;
+}
+.back-link {
+  display: block;
+  width: fit-content;
+  min-height: 44px;
+  padding-block: 12px;
+  margin-top: 24px;
+  font-weight: bold;
+}
+.configuration-summary {
+  margin: 30px 0 0;
+  border-top: 1px solid var(--line);
+}
+.configuration-summary > div {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 18px;
+  line-height: 1.5;
+}
+.configuration-summary dt {
+  font-weight: bold;
+}
+.configuration-summary dd {
+  margin: 0;
+}
 @media (max-width: 800px) {
+  .operation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .site-header {
     flex-direction: column;
     align-items: flex-start;
@@ -278,6 +461,25 @@ main:focus {
   }
 }
 @media (max-width: 480px) {
+  .option-grid {
+    grid-template-columns: 1fr;
+  }
+  .operation-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .operation-grid .choice-option {
+    padding: 14px 12px;
+  }
+  .operation-grid .choice-label {
+    font-size: 15px;
+  }
+  .setup-section legend {
+    font-size: 20px;
+  }
+  .configuration-summary > div {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
   .app-shell {
     width: calc(100% - 32px);
   }
@@ -311,6 +513,11 @@ main:focus {
   }
   .site-footer {
     font-size: 13px;
+  }
+}
+@media (max-width: 360px) {
+  .operation-grid {
+    grid-template-columns: 1fr;
   }
 }
 @media (prefers-reduced-motion: reduce) {

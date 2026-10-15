@@ -27,7 +27,13 @@ describe('application navigation', () => {
 
     const heading = screen.getByRole('heading', { level: 1, name: title });
     expect(heading).toHaveFocus();
-    expect(screen.getByText('Coming soon')).toBeVisible();
+    if (action === 'Start Practice') {
+      expect(
+        screen.getByRole('button', { name: 'Start Session' }),
+      ).toBeEnabled();
+    } else {
+      expect(screen.getByText('Coming soon')).toBeVisible();
+    }
     expect(document.title).toBe(`${title} | Math Practice`);
     await user.click(screen.getByRole('link', { name: 'Return Home' }));
     expect(
