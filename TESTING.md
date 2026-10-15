@@ -40,4 +40,11 @@ To reproduce current checks, run `npm run check` and `npm run dev`. The combined
 - Inspected the complete desktop and 390 × 844 setup layouts; no horizontal overflow (document width and scroll width both 390 pixels). Viewport override was reset. This was emulation, not a real-device test.
 - Submitted choices currently live in memory only. Refresh and unsubmitted-edit persistence are intentionally deferred. Starting does not generate questions or record attempts yet.
 
+## Phase 4
+
+- Added service and utility tests across all four operations and difficulty levels. Seeded randomness makes 8,000 sampled questions reproducible, with separate exact-boundary checks.
+- Tests verify arithmetic, operand/factor/divisor ranges, whole-number division, zero answers, nonnegative subtraction, mixed-operation selection, input rejection, choice uniqueness, shuffled arrays, unique IDs, malformed question validation, and bounded recovery from invalid randomness.
+- Actual debugging: a new sparse-answer-array regression test failed before the fix (one failed, 25 passed in the validator file). Spreading the array before validating its entries closes the hole-skipping behavior of Array.every.
+- Final `npm run check`: passed lint, formatting, 85 tests across seven files, and strict TypeScript/production build. Browser checks were not repeated because this phase adds service logic without connecting it to the interface.
+
 Later question sessions, persistence, full accessibility, real-device, and cross-browser flows remain untested and unimplemented. Gavin's own manual verification has not been performed by the agent.

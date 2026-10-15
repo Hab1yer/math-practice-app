@@ -2,7 +2,7 @@
 
 An individual React + TypeScript assignment for arithmetic practice for children ages 7–12.
 
-**Current scope: Phases 1–3 — Project Setup, Basic Interface, and Practice Configuration.** The app has a responsive home page, shared navigation, all specified routes, and a working setup form. Start Session passes the selected configuration to the practice page, which displays those choices and clearly explains that questions are coming soon. Question sessions, persistence, statistics, and settings behavior will be added in later phases. This is not the finished assignment or a deployed release.
+**Current scope: Phases 1–4 — setup, navigation, practice configuration, and question-generation services.** The app has a responsive home page and setup form. Start Session passes the selected configuration to the practice page, which displays those choices. The tested question generator is ready for the later card/session interface; the current screen still explains that questions are coming soon. Interactive sessions, persistence, statistics, and settings behavior follow in later phases. This is not the finished assignment or a deployed release.
 
 Repository: https://github.com/Hab1yer/math-practice-app (private during development). The instructor will need repository access before submission.
 
@@ -40,13 +40,13 @@ Original reference Markdown is excluded from automatic formatting to preserve it
 - `src/components/layout`: shared header, navigation, page container, and app layout.
 - `src/components/practice`: operation, difficulty, and session-length selectors.
 - `src/pages`: home, practice setup, configuration preview, coming-soon pages, and unknown-route fallback.
-- `src/services`: question generation, statistics, and storage services (reserved).
+- `src/services`: arithmetic question generator and difficulty rules; statistics/storage services are planned.
 - `src/hooks`: shared practice-configuration access.
 - `src/types`: shared question, session, mistake, statistics, and settings contracts.
-- `src/utils`: shared operation, difficulty, and session-length options.
+- `src/utils`: shared practice options, random integers, shuffle, IDs, and complete question validation.
 - `src/test`: shared test environment setup.
 
-The shared types follow the specification's field names, numeric difficulty levels (1–4), and self-reported scoring. `SessionLength` narrows the specification's general number to the selected 5/10/20 options plus `continuous`. Settings names are explicit implementation choices because the specification lists preferences without defining an interface. Dates are ISO strings; choices, positive thresholds, and other runtime constraints still need validation in later phases. Types alone do not validate stored JSON.
+The shared types follow the specification's field names, numeric difficulty levels (1–4), and self-reported scoring. `SessionLength` narrows the specification's general number to the selected 5/10/20 options plus `continuous`. Settings names are explicit implementation choices because the specification lists preferences without defining an interface. Dates are ISO strings. Question arithmetic and choices now have runtime validation; settings thresholds and persisted data still need their later-phase validation. Types alone do not validate stored JSON.
 
 ## References and process
 
@@ -59,7 +59,26 @@ Both references were extracted from https://chatgpt.com/share/6acc2af2-7d74-83ea
 
 ## Next phase
 
-Phase 4 adds question-generation utilities and generators for all four operations and difficulty levels. Answer choices and question cards follow in Phases 5–6.
+Phase 5 improves answer distractors using common operation-specific mistakes and tests their plausibility, uniqueness, and shuffled positions. Question cards follow in Phase 6.
+
+## Question generation
+
+`generateQuestion(operationOrOperations, difficulty)` returns a validated `Question`. Operation-specific entry points are also exported from `src/services/questionGenerator.ts`. Mixed practice chooses among distinct enabled operations. Subtraction stays nonnegative at all levels. Division chooses a nonzero divisor and integer quotient, then multiplies to get the dividend.
+
+The specification leaves some division ranges open. These explicit initial choices are enforced by both generation and validation:
+
+| Difficulty   | Divisor | Quotient               | Maximum dividend |
+| ------------ | ------- | ---------------------- | ---------------- |
+| Beginner     | 1–5     | 0–5                    | 25               |
+| Easy         | 1–10    | 0–10                   | 100              |
+| Intermediate | 1–12    | 0–floor(144 / divisor) | 144              |
+| Advanced     | 1–99    | 0–100                  | 9,900            |
+
+Intermediate multiplication uses a 0–9 factor with either a 0–9 or 10–99 factor. Advanced uses a 10–99 factor with either a 0–9 or 10–99 factor. Addition/subtraction follow the specification's 10/50/100/1,000 operand maxima.
+
+Every question already has four unique nonnegative integer choices, including the correct answer, to honor the full `Question` contract. Current distractors are simple neighboring answers; Phase 5 adds common mistakes and fact-family alternatives. Normal generation shuffles choices. After at most three failed attempts, a validated deterministic fallback preserves the requested difficulty and the first enabled operation; it requires no randomness and uses a fixed choice order. Invalid configuration throws instead of silently changing the setup.
+
+IDs use crypto UUIDs when available, with a timestamp/sequence fallback distinct within the current runtime. Question validation checks arithmetic, difficulty bounds, display text, source metadata, and all four choices. Tests include 8,000 reproducible generated samples, exact boundaries, invalid inputs, and broken-randomness recovery. The engine has not yet been connected to the child-facing interface.
 
 ## Practice configuration
 

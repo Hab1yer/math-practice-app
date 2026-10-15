@@ -63,3 +63,21 @@ User prompt: “proceed”, continuing with the next phase identified in the pri
 - `npm run check` passed: lint, formatting, 12 tests across two files, and strict TypeScript/production build. JavaScript: 271.04 kB (85.21 kB gzip); CSS: 7.53 kB (2.24 kB gzip).
 - Agent browser checks confirmed empty-selection validation, all four operations via Select All, Advanced + Continuous handoff, retained choices on return, and keyboard arrow selection of Intermediate. Desktop and 390 × 844 layout inspection showed no horizontal overflow (document/scroll widths both 390 CSS pixels). Viewport override was reset afterward.
 - Updated only verified Phase 3 checklist items. Phase 4 question generation is next. Gavin's own manual testing and final release verification remain pending.
+
+Phase 3 was committed and pushed as `270b4ef`; the remote main branch matched the local commit.
+
+## 2026-10-15 — Phase 4: Basic Math Question Generation
+
+User prompt: “proceed”, continuing the next phase identified in the preceding response.
+
+- Read the exact Phase 4 checklist, difficulty rules, and Question data contract; confirmed the repository was clean.
+- Added inclusive random integers, non-mutating Fisher–Yates shuffle, and unique IDs, each with tests.
+- Added all four arithmetic generators, mixed-operation selection with duplicate operation removal, display text, and validation of the complete Question contract. Subtraction never becomes negative; division generates divisor/quotient first, preventing zero divisors and fractional answers.
+- Documented unspecified division choices in README: Beginner quotients 0–5, Easy 0–10, Intermediate dividends at most 144, and Advanced divisors 1–99/quotients 0–100/dividends at most 9,900.
+- Included basic neighboring answer choices so returned Question objects already contain four unique whole-number choices. Phase 5 remains pending for operation-specific plausible distractors and fuller answer-generation behavior. The child-facing screen is not connected to the service yet; this is scheduled for the card/session phases.
+- Generation retries at most three times, then returns a validated deterministic question at the requested difficulty using the first enabled operation. Invalid configuration throws. The fallback intentionally avoids a failed random source and has a fixed choice order.
+- Added reproducible 500-sample tests for every operation/difficulty combination (8,000 generated questions), exact min/max boundaries, both multiplication shapes, nonnegative subtraction, division limits, mixed selection, malformed questions, shuffle/ID utilities, and transient/permanent randomness failures.
+- Initial `npm run check` passed 84 tests. During code review, identified that Array.every skips sparse-array holes, allowing a four-slot choice array with only three values through validation. Added a real regression test in `src/utils/validation.test.ts`; `npm test -- src/utils/validation.test.ts` failed with “expected true to be false” (one failure, 25 passed).
+- Fixed the validator by spreading the choices before checking every entry; missing slots become undefined and are rejected. Reran the full check to verify the fix and the existing behavior. Final results are recorded in TESTING.md.
+- Final `npm run check` passed lint, formatting, 85 tests across seven files, and strict TypeScript/production build. The production bundle is unchanged because the generator is not imported by the current interface.
+- No browser interaction was needed for this service-only phase. The existing interface has no new question controls, and no new manual browser verification is claimed.
