@@ -73,14 +73,12 @@ export default function PracticeSetupPage() {
             </label>
           </div>
           <p id="review-hint" className="field-hint">
-            No mistakes to review yet. Start with regular practice when
-            questions are ready.
+            No mistakes to review yet. Start with a regular practice preview.
           </p>
         </fieldset>
         <div className="setup-footer">
           <p className="field-hint">
-            Practice questions are coming soon. You can choose your practice
-            today.
+            Try a one-card preview. Full practice sessions are coming soon.
           </p>
           <button
             className="button-link"

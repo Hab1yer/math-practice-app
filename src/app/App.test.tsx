@@ -31,6 +31,10 @@ describe('application navigation', () => {
       expect(
         screen.getByRole('button', { name: 'Start Session' }),
       ).toBeEnabled();
+    } else if (action === 'Settings') {
+      expect(
+        screen.getByRole('checkbox', { name: /Card animations/ }),
+      ).toBeChecked();
     } else {
       expect(screen.getByText('Coming soon')).toBeVisible();
     }

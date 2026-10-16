@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import { usePracticeConfiguration } from '../hooks/usePracticeConfiguration';
 import { difficultyOptions, operationOptions } from '../utils/practiceOptions';
+import CardPreview from '../components/practice/CardPreview';
 
 export default function PracticeSessionPage() {
   const { configuration } = usePracticeConfiguration();
@@ -9,9 +10,7 @@ export default function PracticeSessionPage() {
     <PageContainer eyebrow="One step closer" title="Your practice space">
       {configuration ? (
         <>
-          <p className="intro">
-            Your choices are ready. Practice questions are coming soon!
-          </p>
+          <CardPreview configuration={configuration} />
           <dl
             className="configuration-summary"
             aria-label="Selected practice configuration"
@@ -56,10 +55,7 @@ export default function PracticeSessionPage() {
           </dl>
         </>
       ) : (
-        <p className="intro">
-          Choose what you’d like to practice first. Your questions are coming
-          soon.
-        </p>
+        <p className="intro">Choose what you’d like to practice first.</p>
       )}
       <Link className="button-link" to="/practice/setup">
         {configuration ? 'Change practice choices' : 'Choose your practice'}{' '}

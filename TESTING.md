@@ -56,4 +56,15 @@ To reproduce current checks, run `npm run check` and `npm run dev`. The combined
 - The existing 8,000 generated-question samples pass with the new choice service integrated. Broken-randomness fallback tests continue to pass.
 - Interface behavior is unchanged; no new manual browser checks are claimed.
 
-Later question cards/sessions, persistence, full accessibility, real-device, and cross-browser flows remain untested and unimplemented. Gavin's own manual verification has not been performed by the agent.
+## Phase 6
+
+- Final `npm run check`: passed lint, formatting, 124 tests across ten files, and strict TypeScript/production build.
+- Five new card tests cover selection requirements, changing selections, answer locking, both revealed answer values, self-report semantics, duplicate submission prevention, new-question reset, fixed/continuous labels, keyboard interaction, and disabled animations/explanations.
+- One new integration test verifies that the real Settings controls change preview behavior and that Try another card resets the interaction. Existing setup/navigation tests were updated for the working card/settings screens.
+- A focus assertion caught an incorrect ref placement during refinement (one test failed, 123 passed). Corrected the front-heading ref and verified the complete suite passed again.
+- Agent browser checks: actual generated card; disabled/enabled Flip Card; reveal and selected/correct answers; self-report overriding answer equality; both result buttons disabling; Try another card reset; Tab/Enter movement to the next question heading; no console errors.
+- Settings browser check: animations off produced a computed transition duration of `0s`; explanations off removed the explanation while reveal continued to work.
+- Inspected front and back desktop/mobile layouts at 390 × 844. No horizontal overflow; viewport reset afterward. The reduced-motion CSS is present, but OS preference switching and screen-reader testing remain pending.
+- This is explicitly a one-card preview; full session behavior, saved attempts, and aggregate scoring are not implemented yet.
+
+Later full sessions, persistence, full accessibility, real-device, and cross-browser flows remain untested and unimplemented. Gavin's own manual verification has not been performed by the agent.

@@ -59,9 +59,7 @@ describe('practice configuration', () => {
     expect(screen.getByText('Advanced')).toBeVisible();
     expect(screen.getByText('Continuous')).toBeVisible();
     expect(screen.getByText('Regular practice')).toBeVisible();
-    expect(
-      screen.getByText(/Practice questions are coming soon/),
-    ).toBeVisible();
+    expect(screen.getByText(/Try one card with your choices/)).toBeVisible();
     await user.click(
       screen.getByRole('link', { name: 'Change practice choices' }),
     );

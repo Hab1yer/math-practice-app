@@ -5,6 +5,7 @@ import ComingSoonPage from '../pages/ComingSoonPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import PracticeSetupPage from '../pages/PracticeSetupPage';
 import PracticeSessionPage from '../pages/PracticeSessionPage';
+import SettingsPage from '../pages/SettingsPage';
 
 export default function AppRoutes() {
   return (
@@ -31,15 +32,7 @@ export default function AppRoutes() {
             />
           }
         />
-        <Route
-          path="settings"
-          element={
-            <ComingSoonPage
-              title="Make it your own"
-              description="Your preferences will have a home here."
-            />
-          }
-        />
+        <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

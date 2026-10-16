@@ -97,3 +97,22 @@ User prompt: “proceed”, continuing the next phase named in the previous resu
 - A seeded 4,000-choice sample verifies that all four positions receive the correct answer with broad balance (each between 800 and 1,200). Existing 8,000 generated-question samples exercise the integrated service as well.
 - `npm run check` passed lint, formatting, 118 tests across eight files, and strict TypeScript/production build. No new dependencies were needed. This phase required no debugging fixes after the first full check.
 - Only the 18 verified Phase 5 checklist items are completed. Question-card interaction remains Phase 6. This service-only phase did not alter the current interface; browser checks were not repeated or claimed.
+
+Phase 5 was committed and pushed as `c3be9f2`; the remote main branch matched the local commit.
+
+## 2026-10-15 — Phase 6: Question Card
+
+User prompt: “proceed”, continuing with the next named phase.
+
+- Read the exact Phase 6 checklist and inspected the clean repository. Continued the established frontend design using large answer buttons, green/cream colors, and aligned card faces.
+- Added reusable AnswerChoice and QuestionCard components. Selection is mutable before reveal; Flip Card requires a selection. The back shows the original problem, correct/selected answers, optional explanation, and self-report buttons.
+- Result callbacks use the child's self-report, not answer equality. A synchronous ref locks submission before the callback; both result controls then disable. A new question ID remounts the interaction state, resetting selection, flip state, and the lock.
+- Connected the existing generators to an explicitly labeled one-card preview on the practice route. It shows Question 1 of 1, with the requested future-session configuration below. Try another card is available after reporting. No full sessions, attempt records, scoring totals, summaries, or persistence are claimed.
+- Added working in-memory Card animations and Show explanations settings. Motion preference changes the CSS transition, and reduced-motion CSS overrides animation independently. Other Settings tasks remain pending.
+- Added five card tests and one preferences integration test; updated previous navigation/setup tests. Initial full check passed 124 tests.
+- Browser navigation initially found the old server stopped. Restarted one Vite server on the strict 5173 port with approved access; the preview then loaded normally.
+- Agent browser checks confirmed selected/locked states, reveal, both answer values, explanations, and self-report behavior even when the selected answer was incorrect. Both result buttons disabled after reporting.
+- Turned both preferences off in the browser; inspected a zero-second computed card transition and confirmed the explanation disappeared. Inspected mobile front/back at 390 × 844 with no horizontal overflow (document/scroll widths both 390), then reset the viewport. Reduced-motion CSS is implemented, but changing the operating-system motion preference was not manually tested.
+- Added focus movement to result/new-question text. A new focus assertion caught a mistake in that edit: the front-heading ref was attached to the back instead. The check failed one test (123 passed); moved the ref to the front heading, then reran all checks.
+- Final `npm run check` passed lint, formatting, 124 tests across ten files, and strict TypeScript/production build. Browser Tab/Enter verification then confirmed the new question heading receives focus after Try another card. Browser console showed no errors.
+- Only the 35 verified Phase 6 checklist items are completed. Full session progression is Phase 7. All browser checks were agent verification, not Gavin's own testing.

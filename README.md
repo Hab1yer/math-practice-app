@@ -2,7 +2,7 @@
 
 An individual React + TypeScript assignment for arithmetic practice for children ages 7–12.
 
-**Current scope: Phases 1–5 — setup, navigation, practice configuration, question generation, and multiple-choice answers.** The app has a responsive home page and setup form. Start Session passes the selected configuration to the practice page, which displays those choices. The tested generator now includes operation-specific answer choices; the current screen still explains that questions are coming soon. Question cards, interactive sessions, persistence, statistics, and settings behavior follow in later phases. This is not the finished assignment or a deployed release.
+**Current scope: Phases 1–6, including an interactive question-card preview.** Choose a practice configuration, select an answer, flip the card, and report your result. Try another card after reporting. Settings now control card motion and explanations. This is a one-card preview, not a full scored session; session progression, persistence, statistics, and the remaining preferences follow in later phases. This is not the finished assignment or a deployed release.
 
 Repository: https://github.com/Hab1yer/math-practice-app (private during development). The instructor will need repository access before submission.
 
@@ -36,14 +36,14 @@ Original reference Markdown is excluded from automatic formatting to preserve it
 
 ## Project structure
 
-- `src/app`: root application component, configuration provider, route definitions, and navigation tests.
+- `src/app`: root component, configuration/card-preference providers, routes, and navigation tests.
 - `src/components/layout`: shared header, navigation, page container, and app layout.
-- `src/components/practice`: operation, difficulty, and session-length selectors.
-- `src/pages`: home, practice setup, configuration preview, coming-soon pages, and unknown-route fallback.
+- `src/components/practice`: setup selectors, answer-choice buttons, question card, and one-card preview.
+- `src/pages`: home, setup, card preview, card settings, coming-soon pages, and unknown-route fallback.
 - `src/services`: arithmetic question generator, answer-choice generator, and difficulty rules; statistics/storage services are planned.
-- `src/hooks`: shared practice-configuration access.
+- `src/hooks`: shared configuration and card-preference access.
 - `src/types`: shared question, session, mistake, statistics, and settings contracts.
-- `src/utils`: shared practice options, random integers, shuffle, IDs, and complete question validation.
+- `src/utils`: practice options, random integers, shuffle, IDs, question validation, and explanations.
 - `src/test`: shared test environment setup.
 
 The shared types follow the specification's field names, numeric difficulty levels (1–4), and self-reported scoring. `SessionLength` narrows the specification's general number to the selected 5/10/20 options plus `continuous`. Settings names are explicit implementation choices because the specification lists preferences without defining an interface. Dates are ISO strings. Question arithmetic and choices now have runtime validation; settings thresholds and persisted data still need their later-phase validation. Types alone do not validate stored JSON.
@@ -59,7 +59,7 @@ Both references were extracted from https://chatgpt.com/share/6acc2af2-7d74-83ea
 
 ## Next phase
 
-Phase 6 adds the question card: answer selection, locked choices after reveal, flipping, explanations, and self-reported result controls. Full session progression follows in Phase 7.
+Phase 7 adds actual session IDs, attempt records/totals, automatic next-question progression, fixed-length completion, continuous sessions, and accessible progress. Session summaries follow in Phase 8.
 
 ## Question generation
 
@@ -78,7 +78,17 @@ Intermediate multiplication uses a 0–9 factor with either a 0–9 or 10–99 f
 
 Every question has four unique nonnegative integer choices, including the correct answer. Normal generation uses the answer-choice service described below and shuffles all four positions. After at most three failed attempts, a validated deterministic fallback preserves the requested difficulty and the first enabled operation; it requires no randomness and uses a fixed choice order. Invalid configuration throws instead of silently changing the setup.
 
-IDs use crypto UUIDs when available, with a timestamp/sequence fallback distinct within the current runtime. Question validation checks arithmetic, difficulty bounds, display text, source metadata, and all four choices. Tests include 8,000 reproducible generated samples, exact boundaries, invalid inputs, and broken-randomness recovery. The engine has not yet been connected to the child-facing interface.
+IDs use crypto UUIDs when available, with a timestamp/sequence fallback distinct within the current runtime. Question validation checks arithmetic, difficulty bounds, display text, source metadata, and all four choices. Tests include 8,000 reproducible generated samples, exact boundaries, invalid inputs, and broken-randomness recovery. The engine is connected to the one-card preview.
+
+## Question-card preview
+
+Use Start Practice → Start Session to open a card using your selected operations and difficulty. The preview says “Question 1 of 1”; your configured session length remains visible separately and will drive real sessions in Phase 7. The reusable card also accepts fixed totals and continuous mode.
+
+Answer buttons expose selected state with both a checkmark/text and `aria-pressed`. Flip Card stays disabled until selection. Revealing shows the original problem, correct answer, selected answer, and optional explanation; the front becomes inert and its choices lock. I Got It Right/Wrong sends the child's self-report once, even if it differs from answer equality. A synchronous submission lock prevents both controls from firing for one card.
+
+Try another card generates a new question ID, resetting selection, reveal, and submission state. Keyboard focus moves to the revealed answer, the reported-result message, and the next question as appropriate. The preview reports only this card's result; no attempts, totals, or history are stored.
+
+Settings controls card animations and explanations immediately through React Context. Turning motion off sets the card transition to zero; the CSS also respects `prefers-reduced-motion`. The two faces share a grid area, with hidden backfaces preventing mirrored text. Inactive faces are excluded from keyboard and assistive-technology interaction. Preferences currently reset on refresh; persistence and the rest of Settings remain scheduled work.
 
 ## Multiple-choice answers
 
