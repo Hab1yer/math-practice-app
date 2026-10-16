@@ -116,3 +116,22 @@ User prompt: “proceed”, continuing with the next named phase.
 - Added focus movement to result/new-question text. A new focus assertion caught a mistake in that edit: the front-heading ref was attached to the back instead. The check failed one test (123 passed); moved the ref to the front heading, then reran all checks.
 - Final `npm run check` passed lint, formatting, 124 tests across ten files, and strict TypeScript/production build. Browser Tab/Enter verification then confirmed the new question heading receives focus after Try another card. Browser console showed no errors.
 - Only the 35 verified Phase 6 checklist items are completed. Full session progression is Phase 7. All browser checks were agent verification, not Gavin's own testing.
+
+Phase 6 was committed and pushed as `6482e1c`; remote main matched the local commit.
+
+## 2026-10-16 — Phase 7: Practice Session
+
+User prompt: “proceed”, continuing the next phase named in the preceding result.
+
+- Inspected the clean repository and exact Phase 7 checklist. Replaced the one-card preview with an in-memory session provider and separate lifecycle service.
+- Start validates configuration, copies enabled operations, creates the session ID/time and first question, and stores active state, index, totals, and completed attempts. Missing session data redirects to setup.
+- Card callbacks now include the selected answer. Each self-report stores a full PracticeAttempt and increments attempted/correct/incorrect totals according to self-report, independently of answer equality. Duplicate/stale/question-mismatched/invalid/post-completion submissions are ignored.
+- Provider actions update a synchronous ref before publishing React state, preventing queued events from reading stale session state. Random generation, IDs, and timestamps run outside state-updater callbacks.
+- New cards advance immediately, reset selection/reveal/submission state, and receive focus. A short optional CSS entrance transition respects disabled animations and reduced-motion rules. Five bounded retries avoid a repeated expression, with a valid deterministic alternate for constant randomness.
+- Added fixed progress and accessible labels, with no fixed progress bar in continuous mode. Fixed sessions stop at the configured 5/10/20 attempts. Continuous sessions continue until explicitly ended. End Session confirmation supports cancel/Escape, keyboard focus containment, and excluding the unfinished card.
+- Added a basic completion page showing totals and home/setup links to satisfy this phase's completion flow. The full summary fields/actions remain Phase 8; no Phase 8 checkboxes were changed.
+- A failed next-question generator preserves the just-recorded attempt and allows ending the session. Unit tests simulate this failure. State remains in memory only; persistence, refresh recovery, and route-leave guards remain later-phase work.
+- Added 31 lifecycle tests and three complete-flow component tests; updated existing tests for full sessions. Tests cover fixed lengths, self-report totals, continuous sessions past 20 attempts, empty endings, duplicate/stale events, invalid setup, constant-randomness repeat avoidance across all 16 operation/difficulty combinations, complete five-card UI flow, end confirmation, and settings navigation retention.
+- Initial `npm run check` passed 158 tests and build. Refined dialog cancellation to restore focus in an effect after removing inert from the session content, then prepared a final verification run.
+- Live browser verification was blocked by the browser tool's URL security policy while trying to acquire the local app tab. No workaround was attempted, and no live browser or mobile checks are claimed for Phase 7. Automated interaction checks are recorded separately in TESTING.md.
+- Final verification after the focus refinement passed lint, formatting, all 158 tests across twelve files, and strict TypeScript/production build. JavaScript: 287.87 kB (90.04 kB gzip); CSS: 11.29 kB (3.08 kB gzip). Marked all 33 implemented and automatically verified Phase 7 tasks complete; Phase 8 remains pending.

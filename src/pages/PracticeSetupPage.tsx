@@ -7,9 +7,11 @@ import DifficultySelector from '../components/practice/DifficultySelector';
 import SessionLengthSelector from '../components/practice/SessionLengthSelector';
 import { usePracticeConfiguration } from '../hooks/usePracticeConfiguration';
 import type { PracticeConfiguration } from '../types/session';
+import { usePracticeSession } from '../hooks/usePracticeSession';
 
 export default function PracticeSetupPage() {
   const { configuration, setConfiguration } = usePracticeConfiguration();
+  const { startSession: beginSession, error } = usePracticeSession();
   const [draft, setDraft] = useState<PracticeConfiguration>(
     configuration ?? {
       operations: ['addition'],
@@ -23,6 +25,7 @@ export default function PracticeSetupPage() {
   function startSession(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!draft.operations.length) return;
+    if (!beginSession(draft)) return;
     setConfiguration(draft);
     navigate('/practice/session');
   }
@@ -36,6 +39,7 @@ export default function PracticeSetupPage() {
         A quick warm-up or a bigger challenge? Make it yours.
       </p>
       <form className="setup-form" onSubmit={startSession}>
+        {error && <p role="alert">{error}</p>}
         <OperationSelector
           value={draft.operations}
           onChange={(operations) => setDraft({ ...draft, operations })}
@@ -73,12 +77,12 @@ export default function PracticeSetupPage() {
             </label>
           </div>
           <p id="review-hint" className="field-hint">
-            No mistakes to review yet. Start with a regular practice preview.
+            No mistakes to review yet. Start with regular practice.
           </p>
         </fieldset>
         <div className="setup-footer">
           <p className="field-hint">
-            Try a one-card preview. Full practice sessions are coming soon.
+            Ready for a little discovery? Let’s get started.
           </p>
           <button
             className="button-link"

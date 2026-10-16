@@ -4,6 +4,7 @@ import type { PracticeConfiguration } from '../types/session';
 import { PracticeConfigurationContext } from './practiceConfigurationContext';
 import { AppPreferencesContext } from './appPreferencesContext';
 import type { CardPreferences } from './appPreferencesContext';
+import PracticeSessionProvider from './PracticeSessionProvider';
 
 export default function AppProvider({ children }: { children: ReactNode }) {
   const [configuration, setConfiguration] =
@@ -23,7 +24,7 @@ export default function AppProvider({ children }: { children: ReactNode }) {
             setPreferences((current) => ({ ...current, ...updates })),
         }}
       >
-        {children}
+        <PracticeSessionProvider>{children}</PracticeSessionProvider>
       </AppPreferencesContext.Provider>
     </PracticeConfigurationContext.Provider>
   );

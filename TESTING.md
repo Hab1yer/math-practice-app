@@ -67,4 +67,14 @@ To reproduce current checks, run `npm run check` and `npm run dev`. The combined
 - Inspected front and back desktop/mobile layouts at 390 × 844. No horizontal overflow; viewport reset afterward. The reduced-motion CSS is present, but OS preference switching and screen-reader testing remain pending.
 - This is explicitly a one-card preview; full session behavior, saved attempts, and aggregate scoring are not implemented yet.
 
-Later full sessions, persistence, full accessibility, real-device, and cross-browser flows remain untested and unimplemented. Gavin's own manual verification has not been performed by the agent.
+## Phase 7
+
+- Final `npm run check` passed lint, formatting, 158 tests across twelve files, and strict TypeScript/production build after the dialog-focus refinement.
+- New lifecycle tests cover 5/10/20-question stopping, full attempt fields and self-report totals, duplicate/stale/invalid/post-completion events, independent configuration copies, zero-attempt ending, continuous practice beyond fixed lengths, and preserving an attempt when next-question generation throws.
+- Constant-randomness tests cover non-repeating valid consecutive expressions for all 16 operation/difficulty combinations.
+- New component flows complete a five-question session (3 correct/2 incorrect), verify no counting at selection/reveal, check progress/reset/final recap, cancel and confirm continuous endings, exclude unfinished cards, and retain active session progress when visiting Settings.
+- Existing card tests still verify duplicate control locking and self-report semantics; callbacks now also pass the selected answer for attempt recording.
+- Live browser verification is pending: the browser tool rejected access under its URL security policy. No alternate browser or workaround was used. Mobile layout, real browser focus behavior, and manual end-to-end checks remain pending for this phase.
+- Records remain in memory only. Refresh recovery, durable storage, and navigation-loss prevention are not verified or implemented here.
+
+Later full summaries, persistence, full accessibility, real-device, and cross-browser flows remain pending. Gavin's own manual verification has not been performed by the agent.

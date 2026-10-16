@@ -7,7 +7,7 @@ interface QuestionCardProps {
   question: Question;
   questionNumber: number;
   totalQuestions: number | 'continuous';
-  onResult: (selfReportedCorrect: boolean) => void;
+  onResult: (selfReportedCorrect: boolean, selectedAnswer: number) => void;
   animationEnabled?: boolean;
   showExplanations?: boolean;
 }
@@ -45,7 +45,7 @@ function CardInteraction({
     if (!isCardFlipped || selectedAnswer === null || submitted.current) return;
     submitted.current = true;
     setResult(correct);
-    onResult(correct);
+    onResult(correct, selectedAnswer);
   }
 
   return (

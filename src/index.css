@@ -683,6 +683,97 @@ button.button-link:disabled {
   gap: 18px;
   margin-top: 32px;
 }
+
+.session-context {
+  font-size: 18px;
+  line-height: 1.6;
+  font-weight: bold;
+  margin: 20px 0 0;
+}
+.session-totals {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 28px 0;
+}
+.session-totals > div {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 12px;
+  text-align: center;
+}
+.session-totals dt {
+  font-size: 15px;
+}
+.session-totals dd {
+  margin: 10px 0 0;
+  font-size: 30px;
+  font-weight: bold;
+}
+.session-progress label {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.session-progress progress {
+  width: 100%;
+  height: 18px;
+  accent-color: var(--ink);
+}
+.end-session {
+  margin-top: 28px !important;
+}
+.practice-session .question-card {
+  animation: question-enter 160ms ease-out;
+}
+.practice-session .question-card[data-animate='false'] {
+  animation: none;
+}
+@keyframes question-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: #173e36aa;
+  z-index: 20;
+}
+.confirm-dialog {
+  max-width: 560px;
+  width: 100%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 22px;
+  padding: 30px;
+}
+.confirm-dialog h2 {
+  font-size: 28px;
+}
+.confirm-dialog p {
+  font-size: 18px;
+  line-height: 1.65;
+}
+@media (max-width: 480px) {
+  .session-totals {
+    gap: 6px;
+  }
+  .session-totals > div {
+    padding: 14px 6px;
+  }
+  .session-totals dt {
+    font-size: 13px;
+  }
+}
 @media (max-width: 540px) {
   .question-card {
     padding: 18px 14px;

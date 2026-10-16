@@ -6,6 +6,7 @@ import NotFoundPage from '../pages/NotFoundPage';
 import PracticeSetupPage from '../pages/PracticeSetupPage';
 import PracticeSessionPage from '../pages/PracticeSessionPage';
 import SettingsPage from '../pages/SettingsPage';
+import SessionSummaryPage from '../pages/SessionSummaryPage';
 
 export default function AppRoutes() {
   return (
@@ -14,15 +15,7 @@ export default function AppRoutes() {
         <Route index element={<HomePage />} />
         <Route path="practice/setup" element={<PracticeSetupPage />} />
         <Route path="practice/session" element={<PracticeSessionPage />} />
-        <Route
-          path="practice/summary"
-          element={
-            <ComingSoonPage
-              title="Your practice recap"
-              description="Celebrate the small steps you take."
-            />
-          }
-        />
+        <Route path="practice/summary" element={<SessionSummaryPage />} />
         <Route
           path="statistics"
           element={

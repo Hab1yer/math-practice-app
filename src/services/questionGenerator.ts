@@ -144,3 +144,44 @@ export const generateMultiplicationQuestion = (difficulty: DifficultyLevel) =>
   generateQuestion('multiplication', difficulty);
 export const generateDivisionQuestion = (difficulty: DifficultyLevel) =>
   generateQuestion('division', difficulty);
+
+/** Bounded retry plus a valid alternate expression for a degenerate random source. */
+export function generateNextQuestion(
+  operations: readonly MathOperation[],
+  difficulty: DifficultyLevel,
+  previous: Question,
+): Question {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const next = generateQuestion(operations, difficulty);
+    if (
+      next.operation !== previous.operation ||
+      next.firstOperand !== previous.firstOperand ||
+      next.secondOperand !== previous.secondOperand
+    )
+      return next;
+  }
+  const a = previous.firstOperand;
+  const b = previous.secondOperand;
+  let operands: [number, number];
+  switch (previous.operation) {
+    case 'addition':
+      operands = [a === 0 ? 1 : 0, b];
+      break;
+    case 'subtraction':
+      operands = a === b ? [a || 1, 0] : [a, a];
+      break;
+    case 'multiplication':
+      operands = [
+        difficulty === 4 ? (a === 10 ? 11 : 10) : a === 0 ? 1 : 0,
+        b || 1,
+      ];
+      break;
+    case 'division':
+      operands = [0, b === 1 ? 2 : 1];
+      break;
+  }
+  const next = buildQuestion(previous.operation, difficulty, operands, true);
+  if (!isValidQuestion(next))
+    throw new Error('Unable to create a different valid question');
+  return next;
+}

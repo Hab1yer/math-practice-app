@@ -54,21 +54,19 @@ describe('practice configuration', () => {
     await user.click(screen.getByRole('radio', { name: /Continuous/ }));
     expect(screen.getByRole('radio', { name: /Beginner/ })).not.toBeChecked();
     await user.click(screen.getByRole('button', { name: 'Start Session' }));
-    const summary = screen.getByLabelText('Selected practice configuration');
-    expect(within(summary).getByText('Addition, Division')).toBeVisible();
-    expect(screen.getByText('Advanced')).toBeVisible();
-    expect(screen.getByText('Continuous')).toBeVisible();
-    expect(screen.getByText('Regular practice')).toBeVisible();
-    expect(screen.getByText(/Try one card with your choices/)).toBeVisible();
+    expect(screen.getByText(/Addition, Division · Advanced/)).toBeVisible();
+    expect(screen.getByText('Question 1 · Continuous practice')).toBeVisible();
     await user.click(
-      screen.getByRole('link', { name: 'Change practice choices' }),
+      within(screen.getByRole('navigation')).getByRole('link', {
+        name: 'Practice',
+      }),
     );
     expect(screen.getByRole('checkbox', { name: 'Division' })).toBeChecked();
     expect(screen.getByRole('radio', { name: /Advanced/ })).toBeChecked();
     expect(screen.getByRole('radio', { name: /Continuous/ })).toBeChecked();
     await user.click(screen.getByRole('radio', { name: /5 questions/ }));
     await user.click(screen.getByRole('button', { name: 'Start Session' }));
-    expect(screen.getByText('5 questions')).toBeVisible();
+    expect(screen.getByText('Question 1 of 5')).toBeVisible();
   });
 
   it('supports keyboard toggles and exclusive radio choices', async () => {
@@ -94,14 +92,10 @@ describe('practice configuration', () => {
   });
 
   it('guides a direct session visit back to configuration', async () => {
-    const user = userEvent.setup();
     renderSetup('/practice/session');
     expect(
-      screen.getByText(/Choose what you’d like to practice first/),
+      screen.getByRole('heading', { name: 'Choose your practice' }),
     ).toBeVisible();
-    await user.click(
-      screen.getByRole('link', { name: 'Choose your practice' }),
-    );
     expect(screen.getByRole('button', { name: 'Start Session' })).toBeVisible();
   });
 });

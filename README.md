@@ -2,7 +2,7 @@
 
 An individual React + TypeScript assignment for arithmetic practice for children ages 7–12.
 
-**Current scope: Phases 1–6, including an interactive question-card preview.** Choose a practice configuration, select an answer, flip the card, and report your result. Try another card after reporting. Settings now control card motion and explanations. This is a one-card preview, not a full scored session; session progression, persistence, statistics, and the remaining preferences follow in later phases. This is not the finished assignment or a deployed release.
+**Current scope: Phases 1–7, including full in-memory practice sessions.** Choose a configuration, select an answer, flip the card, and self-report the result. Each report records one attempt and advances automatically. Fixed sessions stop at 5, 10, or 20 questions; continuous sessions end through confirmation. A basic completion page shows totals. Persistence, the fuller summary, statistics, and the remaining preferences follow in later phases. This is not the finished assignment or a deployed release.
 
 Repository: https://github.com/Hab1yer/math-practice-app (private during development). The instructor will need repository access before submission.
 
@@ -36,12 +36,12 @@ Original reference Markdown is excluded from automatic formatting to preserve it
 
 ## Project structure
 
-- `src/app`: root component, configuration/card-preference providers, routes, and navigation tests.
+- `src/app`: root component, configuration/card-preference/session providers, routes, and navigation tests.
 - `src/components/layout`: shared header, navigation, page container, and app layout.
-- `src/components/practice`: setup selectors, answer-choice buttons, question card, and one-card preview.
-- `src/pages`: home, setup, card preview, card settings, coming-soon pages, and unknown-route fallback.
-- `src/services`: arithmetic question generator, answer-choice generator, and difficulty rules; statistics/storage services are planned.
-- `src/hooks`: shared configuration and card-preference access.
+- `src/components/practice`: setup selectors, answer buttons, question card, and end-session dialog.
+- `src/pages`: home, setup, active session, basic completion page, card settings, and route fallbacks.
+- `src/services`: arithmetic/answer generators, difficulty rules, and session lifecycle; statistics/storage are planned.
+- `src/hooks`: shared configuration, card preferences, and active-session access.
 - `src/types`: shared question, session, mistake, statistics, and settings contracts.
 - `src/utils`: practice options, random integers, shuffle, IDs, question validation, and explanations.
 - `src/test`: shared test environment setup.
@@ -59,7 +59,7 @@ Both references were extracted from https://chatgpt.com/share/6acc2af2-7d74-83ea
 
 ## Next phase
 
-Phase 7 adds actual session IDs, attempt records/totals, automatic next-question progression, fixed-length completion, continuous sessions, and accessible progress. Session summaries follow in Phase 8.
+Phase 8 expands the completion page with accuracy, practiced operations/difficulty, review counts, and all specified next actions. Phase 9 adds persistent storage.
 
 ## Question generation
 
@@ -78,15 +78,19 @@ Intermediate multiplication uses a 0–9 factor with either a 0–9 or 10–99 f
 
 Every question has four unique nonnegative integer choices, including the correct answer. Normal generation uses the answer-choice service described below and shuffles all four positions. After at most three failed attempts, a validated deterministic fallback preserves the requested difficulty and the first enabled operation; it requires no randomness and uses a fixed choice order. Invalid configuration throws instead of silently changing the setup.
 
-IDs use crypto UUIDs when available, with a timestamp/sequence fallback distinct within the current runtime. Question validation checks arithmetic, difficulty bounds, display text, source metadata, and all four choices. Tests include 8,000 reproducible generated samples, exact boundaries, invalid inputs, and broken-randomness recovery. The engine is connected to the one-card preview.
+IDs use crypto UUIDs when available, with a timestamp/sequence fallback distinct within the current runtime. Question validation checks arithmetic, difficulty bounds, display text, source metadata, and all four choices. Tests include 8,000 reproducible generated samples, exact boundaries, invalid inputs, and broken-randomness recovery. The engine is connected to practice sessions.
 
-## Question-card preview
+## Practice sessions
 
-Use Start Practice → Start Session to open a card using your selected operations and difficulty. The preview says “Question 1 of 1”; your configured session length remains visible separately and will drive real sessions in Phase 7. The reusable card also accepts fixed totals and continuous mode.
+Use Start Practice → Start Session to begin with your selected operations, difficulty, and length. Fixed practice shows Question X of Y, attempted/correct/incorrect totals, and a labeled native progress bar. Continuous practice shows the question count without a fixed progress bar. End Session opens a confirmation dialog; cancel/Escape returns to the current card, while confirming ends without counting the unfinished card.
 
 Answer buttons expose selected state with both a checkmark/text and `aria-pressed`. Flip Card stays disabled until selection. Revealing shows the original problem, correct answer, selected answer, and optional explanation; the front becomes inert and its choices lock. I Got It Right/Wrong sends the child's self-report once, even if it differs from answer equality. A synchronous submission lock prevents both controls from firing for one card.
 
-Try another card generates a new question ID, resetting selection, reveal, and submission state. Keyboard focus moves to the revealed answer, the reported-result message, and the next question as appropriate. The preview reports only this card's result; no attempts, totals, or history are stored.
+Only a self-report records an attempt. Each stored in-memory attempt includes session/question IDs, operands, correct and selected answers, difficulty, source, time, and self-reported result. The next card appears automatically with fresh selection/reveal/submission state and heading focus. Duplicate, stale, invalid, and post-completion submissions are ignored. Provider actions commit synchronously through a ref so queued clicks see the latest state; randomness and timestamps do not run inside React state-updater functions.
+
+Consecutive identical expressions are avoided with five bounded generation attempts, then a validated alternate expression if randomness keeps repeating. Fixed completion stops generating cards and timestamps the session. Both fixed completion and explicit ending navigate to a basic recap with totals. If next-question generation fails, the answered attempt remains recorded and the session can still be ended.
+
+All records currently live in React Context. Refreshing clears the session; switching routes retains completed attempts and the current question, but not an unrevealed answer selection. Explicitly starting another session replaces the current one. Persistence and accidental-navigation protection remain later-phase work. Missing session/summary data redirects to setup, and an active session redirects away from the completion page.
 
 Settings controls card animations and explanations immediately through React Context. Turning motion off sets the card transition to zero; the CSS also respects `prefers-reduced-motion`. The two faces share a grid area, with hidden backfaces preventing mirrored text. Inactive faces are excluded from keyboard and assistive-technology interaction. Preferences currently reset on refresh; persistence and the rest of Settings remain scheduled work.
 
@@ -102,7 +106,7 @@ Fisher–Yates shuffles the final four choices. Tests exercise zero/one answers,
 
 The setup form defaults to addition, Beginner, 10 questions, and regular practice. Native checkboxes allow mixed operations; Select All chooses all four. Native radio groups enforce one difficulty and one session length. Start Session is disabled without an operation, with an explanatory message. Mistake review is disabled with an explanation until practice history exists and review is implemented.
 
-Submitted choices are held in React Context and displayed at `/practice/session`. Returning to setup restores those submitted choices for editing. They are not yet saved to localStorage; refreshing clears them, and leaving setup discards unsubmitted edits. A direct session visit without configuration provides a link to setup. No attempts or statistics are recorded yet. Settings-based defaults and refresh recovery remain for their scheduled phases.
+Submitted choices are held in React Context and used to start `/practice/session`. Returning to setup restores those choices for editing; Start Session validates them and explicitly starts a fresh session. Configurations are not saved to localStorage, and leaving setup discards unsubmitted edits. Direct session visits without a valid session redirect to setup. Attempt records and session totals now work in memory; historical statistics, settings-based defaults, and refresh recovery remain scheduled work.
 
 ## Navigation
 

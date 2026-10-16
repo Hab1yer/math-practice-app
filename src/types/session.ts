@@ -2,6 +2,7 @@ import type {
   DifficultyLevel,
   MathOperation,
   QuestionSource,
+  Question,
 } from './question';
 
 export type SessionLength = 5 | 10 | 20 | 'continuous';
@@ -39,4 +40,12 @@ export interface PracticeSession {
   attempted: number;
   correct: number;
   incorrect: number;
+}
+
+export interface PracticeSessionState {
+  session: PracticeSession;
+  currentQuestion: Question | null;
+  currentQuestionIndex: number;
+  attempts: PracticeAttempt[];
+  isActive: boolean;
 }

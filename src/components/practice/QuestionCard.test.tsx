@@ -79,7 +79,10 @@ describe('question card', () => {
       const wrong = screen.getByRole('button', { name: 'I Got It Wrong' });
       fireEvent.click(result ? right : wrong);
       fireEvent.click(result ? wrong : right);
-      expect(onResult).toHaveBeenCalledExactlyOnceWith(result);
+      expect(onResult).toHaveBeenCalledExactlyOnceWith(
+        result,
+        result ? 48 : 56,
+      );
       expect(right).toBeDisabled();
       expect(wrong).toBeDisabled();
       expect(screen.getByRole('status')).toHaveTextContent(
@@ -122,7 +125,10 @@ describe('question card', () => {
     await user.click(screen.getByRole('button', { name: 'Answer 3: 56' }));
     await user.click(screen.getByRole('button', { name: 'Flip Card' }));
     await user.click(screen.getByRole('button', { name: 'I Got It Right' }));
-    expect(onResult.mock.calls).toEqual([[false], [true]]);
+    expect(onResult.mock.calls).toEqual([
+      [false, 48],
+      [true, 56],
+    ]);
   });
 
   it('works by keyboard without animation and can hide explanations', async () => {

@@ -17,9 +17,6 @@ describe('card preview preferences', () => {
       screen.getByRole('checkbox', { name: /Show explanations/ }),
     );
     await user.click(screen.getByRole('link', { name: 'Back to practice' }));
-    await user.click(
-      screen.getByRole('link', { name: 'Choose your practice' }),
-    );
     await user.click(screen.getByRole('button', { name: 'Start Session' }));
     expect(
       screen.getByRole('region', { name: 'Math question card' }),
@@ -28,7 +25,7 @@ describe('card preview preferences', () => {
     await user.click(screen.getByRole('button', { name: 'Flip Card' }));
     expect(screen.queryByText(/plus .* makes/)).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'I Got It Wrong' }));
-    await user.click(screen.getByRole('button', { name: 'Try another card' }));
+    expect(screen.getByText('Question 2 of 10')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Flip Card' })).toBeDisabled();
     expect(screen.getByRole('status')).toBeEmptyDOMElement();
   });

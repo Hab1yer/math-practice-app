@@ -46,8 +46,8 @@ describe('application navigation', () => {
   });
 
   it.each([
-    ['/practice/session', 'Your practice space'],
-    ['/practice/summary', 'Your practice recap'],
+    ['/practice/session', 'Choose your practice'],
+    ['/practice/summary', 'Choose your practice'],
   ])('renders the direct route %s', (path, title) => {
     renderRoute(path);
     expect(
