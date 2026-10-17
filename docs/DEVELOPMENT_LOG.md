@@ -160,3 +160,13 @@ User prompt: “proceed”, following the explanation that Phase 8 was next.
 - Live browser completed five questions with 3 right/2 wrong and displayed 60%; verified restart, empty ending, retained setup settings and both destination links. Inspected desktop/mobile screenshots, no horizontal overflow, restored viewport and checked the console (no errors captured).
 - Marked the 16 Phase 8 items implemented, including the currently unavailable review action as described above. No Phase 9 storage or Phase 14 review behavior is claimed. Verification details and screenshots are in TESTING.md.
 - Final `npm run check` passed lint, formatting, 172 tests across 15 files and strict TypeScript/production build. JavaScript: 289.76 kB (90.43 kB gzip); CSS: 11.85 kB (3.21 kB gzip).
+
+## 2026-10-17 — Repository organization
+
+User requested cleaning up the repository before Phase 9.
+
+- Moved specification.md, TODO.md, TESTING.md and this log into docs/. Original specification and checklist contents are unchanged; earlier log references describe their names/locations at that time.
+- Shortened the root README to current status, setup, commands, a repository map and linked documentation. Moved detailed implementation notes to docs/IMPLEMENTATION.md and corrected outdated summary/deployment wording.
+- Updated screenshot links relative to the testing record's new location and preserved the formatter exclusions for both authoritative reference files.
+- Kept source/tests in their established folders and tooling configuration at the root. Generated/local folders remain ignored; no application behavior changed and Phase 9 has not started.
+- Verified moved specification/checklist Git object hashes match the prior originals and all local Markdown links resolve. Full check passed lint, formatting, 172 tests and production build.
