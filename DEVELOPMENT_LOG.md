@@ -135,3 +135,16 @@ User prompt: “proceed”, continuing the next phase named in the preceding res
 - Initial `npm run check` passed 158 tests and build. Refined dialog cancellation to restore focus in an effect after removing inert from the session content, then prepared a final verification run.
 - Live browser verification was blocked by the browser tool's URL security policy while trying to acquire the local app tab. No workaround was attempted, and no live browser or mobile checks are claimed for Phase 7. Automated interaction checks are recorded separately in TESTING.md.
 - Final verification after the focus refinement passed lint, formatting, all 158 tests across twelve files, and strict TypeScript/production build. JavaScript: 287.87 kB (90.04 kB gzip); CSS: 11.29 kB (3.08 kB gzip). Marked all 33 implemented and automatically verified Phase 7 tasks complete; Phase 8 remains pending.
+
+## 2026-10-17 — Live browser retry and adversarial tests
+
+User prompt: “test the live browser verificatiton again and do an adversarial test”.
+
+- Retried the previously blocked live verification. Started the local server and successfully opened the app in a fresh in-app browser tab. No URL policy rejection occurred in this retry.
+- Completed a five-card mixed session with 5 attempts, 3 self-reported correct and 2 incorrect. Double-clicked a result: exactly one attempt counted, and the following card stayed unselected. Confirmed self-report deliberately overrides answer equality.
+- In continuous practice, verified 2/1/1 totals, no fixed progress bar, dialog keyboard containment, Escape cancellation, focus restoration, retained selection after cancellation, and exclusion of a revealed but unreported third card on ending. Ending an empty session displayed 0/0/0.
+- Visited Settings and returned: completed counts/current question survived, while the unsubmitted selection was lost as already documented. Animations off yielded a computed zero-second transition. Refreshing the summary returned to setup and reset in-memory state; persistence remains unimplemented.
+- Inspected narrow card/dialog layouts at 390 × 844 with no horizontal overflow, saved a mobile empty-summary screenshot, and reset the viewport. Browser console had no captured error-level messages.
+- Added eight service adversarial cases including a reproducible 1,000-answer sequence interleaved with malformed, stale, duplicate and conflicting reports, immutable prior state, replaced-session late reports and malformed configurations. Added three StrictMode provider cases exercising several competing actions in a single event.
+- First full check passed all 169 tests but TypeScript caught an unsupported `exact` test-query option. Removed it and reran the complete check: lint, formatting, 169 tests across 14 files, and production build all passed. No production behavior defect was reproduced or production code changed in this pass.
+- Updated TESTING.md with observed results and remaining verification limits. This task verifies Phase 7; it does not implement Phase 8 or claim full accessibility/cross-browser coverage.

@@ -78,3 +78,28 @@ To reproduce current checks, run `npm run check` and `npm run dev`. The combined
 - Records remain in memory only. Refresh recovery, durable storage, and navigation-loss prevention are not verified or implemented here.
 
 Later full summaries, persistence, full accessibility, real-device, and cross-browser flows remain pending. Gavin's own manual verification has not been performed by the agent.
+
+## 2026-10-17 — Live retry and adversarial verification
+
+The in-app browser retry succeeded against the local development server. This completes the previously blocked Phase 7 live checks listed below; the earlier policy rejection remains part of the historical record.
+
+| Live check                             | Observed result                                                                                                |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Five-question mixed session            | Completed with exactly 5 attempted, 3 correct, 2 incorrect                                                     |
+| Double-click self-report               | One attempt recorded; next card remained unselected with Flip Card disabled                                    |
+| Self-report semantics                  | Reporting right counted as right even when the selected answer was wrong                                       |
+| Continuous practice                    | Continued with 2 attempted, 1 correct, 1 incorrect; no fixed progress bar                                      |
+| Cancel ending                          | Tab/Shift+Tab stayed in the dialog; Escape closed it, restored End Session focus and retained selection/totals |
+| Confirm after reveal without reporting | Unfinished third card excluded; recap remained 2/1/1                                                           |
+| End before any answers                 | Recap displayed 0/0/0 without crashing                                                                         |
+| Settings navigation                    | Completed counts and current question retained; unsubmitted selection cleared (known limitation)               |
+| Preferences                            | Animations off produced a computed 0s transition; explanations off retained working reveal                     |
+| Narrow viewport                        | Card and dialog inspected at 390 × 844; document and scroll widths both 390; viewport reset afterward          |
+| Refresh recap                          | Returned to setup without a blank screen; in-memory data/defaults reset as currently documented                |
+| Browser console                        | No captured error-level messages                                                                               |
+
+Added 11 adversarial tests in two files. A seeded continuous session processes 1,000 answers with stale IDs, NaN selections, nonboolean reports, replayed reports and conflicting duplicate reports interleaved. Every step verifies counts, attempt length, question validity and progression; prior state is frozen to catch mutation. Additional cases reject six malformed configurations and late answers from a replaced session with identical arithmetic. Three provider tests queue competing reports, end-before-report and report-before-end in one event under React StrictMode.
+
+All 169 tests across 14 files passed. The first full check then caught unsupported `exact` options in the new Testing Library test code; removed those options and reran `npm run check`, which passed lint, formatting, tests and strict TypeScript/production build. No production code changes were needed for these checks.
+
+Screenshot evidence: [zero-attempt mobile summary](docs/verification/phase7-empty-summary-mobile.jpg). These are agent checks on the development server, not real-device, cross-browser, screen-reader, production-preview or OS reduced-motion verification. Phase 8 remains pending; storage and route-leave protection remain later work.
