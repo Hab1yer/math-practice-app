@@ -103,3 +103,14 @@ Added 11 adversarial tests in two files. A seeded continuous session processes 1
 All 169 tests across 14 files passed. The first full check then caught unsupported `exact` options in the new Testing Library test code; removed those options and reran `npm run check`, which passed lint, formatting, tests and strict TypeScript/production build. No production code changes were needed for these checks.
 
 Screenshot evidence: [zero-attempt mobile summary](docs/verification/phase7-empty-summary-mobile.jpg). These are agent checks on the development server, not real-device, cross-browser, screen-reader, production-preview or OS reduced-motion verification. Phase 8 remains pending; storage and route-leave protection remain later work.
+
+## Phase 8
+
+- Final `npm run check`: passed lint, formatting, 172 tests across 15 files, and strict TypeScript/production build.
+- Expanded the complete-session test to verify 60% self-reported accuracy, operation/difficulty/review details, and a fresh five-card session after Practice Again.
+- New summary tests verify zero-attempt safety, mixed/Advanced/Continuous configuration reuse, disabled review with an accessible explanation, home/statistics destinations and retained choices through Change Settings. A constructed completed-session fixture verifies 2/3 rounds to 67% and only review-source attempts count toward review completion; this fixture does not implement review generation.
+- Existing lifecycle tests continue to verify exact 5/10/20 stopping, no next question after completion, completion timestamps, and continuous ending.
+- Agent live browser: completed a mixed five-card session with 3 right/2 wrong and inspected 60%, all configured operations, Beginner and zero review questions. Practice Again reset totals to zero, displayed Question 1 of 5 and disabled Flip Card. Ending it without answers displayed 0% and the empty-session message.
+- Live Change Settings retained all operations and five-question selection; View Statistics reached the current coming-soon page; Return Home reached home. No captured console errors.
+- Saved [desktop](docs/verification/phase8-summary-desktop.jpg) and [mobile](docs/verification/phase8-summary-mobile.jpg) screenshots. At a 390 × 844 browser viewport, client and scroll width both measured 375 pixels (vertical scrollbar consumes the remaining width), with no horizontal overflow. Viewport override reset afterward.
+- Practice Mistakes is intentionally disabled with an explanation until Phase 14. Persistence remains Phase 9; active-session recovery remains Phase 18. These checks do not claim real-device or full accessibility verification.

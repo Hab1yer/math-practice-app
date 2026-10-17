@@ -148,3 +148,15 @@ User prompt: “test the live browser verificatiton again and do an adversarial 
 - Added eight service adversarial cases including a reproducible 1,000-answer sequence interleaved with malformed, stale, duplicate and conflicting reports, immutable prior state, replaced-session late reports and malformed configurations. Added three StrictMode provider cases exercising several competing actions in a single event.
 - First full check passed all 169 tests but TypeScript caught an unsupported `exact` test-query option. Removed it and reran the complete check: lint, formatting, 169 tests across 14 files, and production build all passed. No production behavior defect was reproduced or production code changed in this pass.
 - Updated TESTING.md with observed results and remaining verification limits. This task verifies Phase 7; it does not implement Phase 8 or claim full accessibility/cross-browser coverage.
+
+## 2026-10-17 — Phase 8: Session Summary
+
+User prompt: “proceed”, following the explanation that Phase 8 was next.
+
+- Read the exact Phase 8 checklist/specification and used the frontend-design skill to extend the existing visual style. Kept the existing session lifecycle, completion timestamps and route guards; they already meet the completion requirements and have 5/10/20-question regression coverage.
+- Expanded the summary with a yellow accuracy panel, zero-attempt message, totals, configured operation labels, difficulty and completed-review count. Accuracy uses self-reported results and rounds to a whole percentage.
+- Practice Again starts a fresh regular session at the previous difficulty/operations/length. Change Settings returns to practice setup for editing. Added View Statistics and retained Return Home. Practice Mistakes is visibly disabled with an accessible coming-soon explanation until Phase 14; statistics still links to its existing placeholder until Phase 10.
+- Added summary tests for empty sessions, same-configuration restart, retained setup choices, rounded accuracy and review-source counting. Extended the full fixed-session test to assert details and restart from nonzero totals.
+- Live browser completed five questions with 3 right/2 wrong and displayed 60%; verified restart, empty ending, retained setup settings and both destination links. Inspected desktop/mobile screenshots, no horizontal overflow, restored viewport and checked the console (no errors captured).
+- Marked the 16 Phase 8 items implemented, including the currently unavailable review action as described above. No Phase 9 storage or Phase 14 review behavior is claimed. Verification details and screenshots are in TESTING.md.
+- Final `npm run check` passed lint, formatting, 172 tests across 15 files and strict TypeScript/production build. JavaScript: 289.76 kB (90.43 kB gzip); CSS: 11.85 kB (3.21 kB gzip).

@@ -94,7 +94,11 @@ All records currently live in React Context. Refreshing clears the session; swit
 
 Settings controls card animations and explanations immediately through React Context. Turning motion off sets the card transition to zero; the CSS also respects `prefers-reduced-motion`. The two faces share a grid area, with hidden backfaces preventing mirrored text. Inactive faces are excluded from keyboard and assistive-technology interaction. Preferences currently reset on refresh; persistence and the rest of Settings remain scheduled work.
 
-## Multiple-choice answers
+## Session summary
+
+Completed sessions show attempted/correct/incorrect totals, rounded self-reported accuracy (0% when empty), configured operations, difficulty, and the number of completed review attempts. Practice Again starts a fresh regular session with the same operations, difficulty and length; Change Settings opens practice setup with submitted choices retained. View Statistics links to the existing placeholder until Phase 10, and Return Home opens the home page. Practice Mistakes is disabled with an explanation until review mode is implemented in Phase 14. Results remain in memory until Phase 9 storage work.
+
+## Multiple-choice answer generation
 
 `src/services/answerChoices.ts` exports `generateDistractors(problem)` and `generateAnswerChoices(problem)`. It validates the supplied arithmetic, then builds a finite pool of operation-specific alternatives: missed/extra carries or borrows, confusing operations/operands, neighboring multiplication facts, neighboring quotients, and exact neighboring-divisor facts. Fractional, negative, duplicate, correct, and overly distant candidates are removed.
 

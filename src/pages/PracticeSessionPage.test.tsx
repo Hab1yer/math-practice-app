@@ -49,9 +49,18 @@ describe('full practice flow', () => {
     expect(totals).toHaveTextContent('Attempted5');
     expect(totals).toHaveTextContent('Correct3');
     expect(totals).toHaveTextContent('Incorrect2');
+    expect(screen.getByText('60%')).toBeVisible();
+    expect(screen.getByLabelText('Practice details')).toHaveTextContent(
+      'OperationsAdditionDifficultyBeginnerReview questions completed0',
+    );
     expect(
       screen.queryByRole('region', { name: 'Math question card' }),
     ).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Practice Again' }));
+    expect(screen.getByText('Question 1 of 5')).toBeVisible();
+    expect(screen.getByLabelText('Current session totals')).toHaveTextContent(
+      'Attempted0Correct0Incorrect0',
+    );
   });
   it('supports cancelling and confirming continuous practice and excludes unanswered cards', async () => {
     const user = userEvent.setup();
