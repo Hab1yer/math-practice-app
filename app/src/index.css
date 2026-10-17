@@ -722,6 +722,13 @@ button.button-link:disabled {
   border: 1px solid var(--ink);
   border-radius: 18px 18px 42px 18px;
 }
+.storage-notice {
+  padding: 18px 22px;
+  border: 1px solid var(--ink);
+  border-radius: 14px;
+  background: var(--sun);
+  line-height: 1.6;
+}
 .summary-accuracy p {
   margin: 0;
 }

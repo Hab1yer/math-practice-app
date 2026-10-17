@@ -10,16 +10,20 @@ import { PracticeSessionContext } from './practiceSessionContext';
 
 export default function PracticeSessionProvider({
   children,
+  onPersist,
 }: {
   children: ReactNode;
+  onPersist?: (state: PracticeSessionState) => void;
 }) {
   const [state, setState] = useState<PracticeSessionState | null>(null);
   const current = useRef<PracticeSessionState | null>(null);
   const [error, setError] = useState<string | null>(null);
   function commit(next: PracticeSessionState) {
+    if (next === current.current) return;
     current.current = next;
     setState(next);
     setError(null);
+    onPersist?.(next);
   }
   return (
     <PracticeSessionContext.Provider

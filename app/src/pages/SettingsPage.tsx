@@ -43,7 +43,9 @@ export default function SettingsPage() {
           </span>
         </label>
       </div>
-      <p className="field-hint">These choices reset when you reload for now.</p>
+      <p className="field-hint">
+        These choices are saved in this browser when storage is available.
+      </p>
       <Link className="button-link" to="/practice/session">
         Back to practice <span aria-hidden="true">→</span>
       </Link>

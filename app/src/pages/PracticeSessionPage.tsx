@@ -45,7 +45,8 @@ export default function PracticeSessionPage() {
           }
         </p>
         <p className="field-hint">
-          Results stay in this app for now. Refreshing clears this session.
+          Finished answers are saved on this device when storage is available.
+          Refreshing starts a new session.
         </p>
         <dl className="session-totals" aria-label="Current session totals">
           <div>

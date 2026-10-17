@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import App from '../app/App';
 import SessionSummaryPage from './SessionSummaryPage';
 import { PracticeSessionContext } from '../app/practiceSessionContext';
+import { PracticeConfigurationContext } from '../app/practiceConfigurationContext';
 import {
   startPracticeSession,
   recordPracticeResult,
@@ -57,7 +58,11 @@ describe('session summary actions', () => {
             endSession: () => {},
           }}
         >
-          <SessionSummaryPage />
+          <PracticeConfigurationContext.Provider
+            value={{ configuration: null, setConfiguration: () => {} }}
+          >
+            <SessionSummaryPage />
+          </PracticeConfigurationContext.Provider>
         </PracticeSessionContext.Provider>
       </MemoryRouter>,
     );

@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 import App from '../app/App';
+import { createStorageService } from '../services/storageService';
 
 function setup() {
   render(
@@ -49,6 +50,14 @@ describe('full practice flow', () => {
     expect(totals).toHaveTextContent('Attempted5');
     expect(totals).toHaveTextContent('Correct3');
     expect(totals).toHaveTextContent('Incorrect2');
+    const saved = createStorageService().getHistory();
+    expect(saved.attempts).toHaveLength(5);
+    expect(saved.sessions[0]).toMatchObject({
+      attempted: 5,
+      correct: 3,
+      incorrect: 2,
+    });
+    expect(saved.sessions[0].completedAt).toBeTruthy();
     expect(screen.getByText('60%')).toBeVisible();
     expect(screen.getByLabelText('Practice details')).toHaveTextContent(
       'OperationsAdditionDifficultyBeginnerReview questions completed0',

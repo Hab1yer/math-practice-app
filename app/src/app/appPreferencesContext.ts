@@ -8,4 +8,5 @@ export type CardPreferences = Pick<
 export const AppPreferencesContext = createContext<{
   preferences: CardPreferences;
   updatePreferences: (updates: Partial<CardPreferences>) => void;
+  storageWarning?: string | null;
 } | null>(null);

@@ -1,0 +1,176 @@
+import type { AppSettings } from '../types/settings';
+import type { PracticeSessionState } from '../types/session';
+import { isRecord, isValidHistory, isValidSettings } from './storageValidation';
+import type { PracticeHistory } from './storageValidation';
+
+export const STORAGE_VERSION = 1;
+export const STORAGE_KEYS = {
+  settings: 'mathPractice.settings',
+  history: 'mathPractice.history',
+} as const;
+export const DEFAULT_SETTINGS: AppSettings = {
+  soundEnabled: false,
+  cardAnimationEnabled: true,
+  showExplanations: true,
+  feedbackEffectsEnabled: true,
+  defaultSessionLength: 10,
+  defaultDifficulty: 1,
+  defaultOperations: ['addition'],
+  masteryThreshold: 3,
+};
+type StorageAccess = () => Pick<Storage, 'getItem' | 'setItem'>;
+type Category = keyof typeof STORAGE_KEYS;
+interface Loaded<T> {
+  data: T;
+  warning: string | null;
+  readOnly: boolean;
+}
+const copy = <T>(value: T): T => structuredClone(value);
+
+export function createStorageService(
+  access: StorageAccess = () => window.localStorage,
+) {
+  function read<T>(
+    category: Category,
+    fallback: T,
+    validate: (value: unknown) => value is T,
+  ): Loaded<T> {
+    try {
+      const raw = access().getItem(STORAGE_KEYS[category]);
+      if (raw === null)
+        return { data: copy(fallback), warning: null, readOnly: false };
+      const parsed: unknown = JSON.parse(raw);
+      const version = isRecord(parsed) ? parsed.version : undefined;
+      if (typeof version === 'number' && version > STORAGE_VERSION) {
+        return {
+          data: copy(fallback),
+          readOnly: true,
+          warning: `Saved ${category} came from a newer app. New ${category} cannot be saved here yet.`,
+        };
+      }
+      // Version 0 is the initial unversioned shape. Future migrations belong here.
+      if (version !== undefined && version !== 0 && version !== STORAGE_VERSION)
+        throw new Error('Invalid version');
+      const data = isRecord(parsed) && 'data' in parsed ? parsed.data : parsed;
+      if (!validate(data)) throw new Error('Invalid saved data');
+      return { data: copy(data), warning: null, readOnly: false };
+    } catch (error) {
+      return {
+        data: copy(fallback),
+        readOnly: false,
+        warning:
+          error instanceof SyntaxError ||
+          (error instanceof Error && error.message.startsWith('Invalid'))
+            ? `Some saved ${category} could not be read. New practice still works.`
+            : 'Saving is unavailable in this browser. You can keep practicing, but new progress may not be saved.',
+      };
+    }
+  }
+  let settings = read('settings', DEFAULT_SETTINGS, isValidSettings);
+  let history = read<PracticeHistory>(
+    'history',
+    { sessions: [], attempts: [] },
+    isValidHistory,
+  );
+  function write<T>(category: Category, loaded: Loaded<T>): Loaded<T> {
+    if (loaded.readOnly) return loaded;
+    try {
+      access().setItem(
+        STORAGE_KEYS[category],
+        JSON.stringify({ version: STORAGE_VERSION, data: loaded.data }),
+      );
+      return { ...loaded, warning: null };
+    } catch (error) {
+      const full = isRecord(error) && error.name === 'QuotaExceededError';
+      return {
+        ...loaded,
+        warning: full
+          ? 'This browser is out of saving space. You can keep practicing, but new progress may not be saved.'
+          : 'Saving is unavailable in this browser. You can keep practicing, but new progress may not be saved.',
+      };
+    }
+  }
+  return {
+    getSettings: () => copy(settings.data),
+    getHistory: () => copy(history.data),
+    getWarning: () =>
+      [...new Set([settings.warning, history.warning].filter(Boolean))].join(
+        ' ',
+      ) || null,
+    saveSettings(value: AppSettings) {
+      if (!isValidSettings(value)) return;
+      const disk = read('settings', DEFAULT_SETTINGS, isValidSettings);
+      if (disk.readOnly) {
+        settings = {
+          ...settings,
+          data: copy(value),
+          readOnly: true,
+          warning: disk.warning,
+        };
+        return;
+      }
+      settings = write('settings', { ...settings, data: copy(value) });
+    },
+    saveSession(state: PracticeSessionState) {
+      // Merge the latest disk snapshot so sequential writes from another tab are retained.
+      const disk = read<PracticeHistory>(
+        'history',
+        { sessions: [], attempts: [] },
+        isValidHistory,
+      );
+      if (disk.readOnly) {
+        history = { ...history, readOnly: true, warning: disk.warning };
+        return;
+      }
+      const sessions = new Map(
+        disk.data.sessions.map((session) => [session.id, session]),
+      );
+      for (const session of history.data.sessions) {
+        const saved = sessions.get(session.id);
+        if (
+          !saved ||
+          session.attempted > saved.attempted ||
+          (session.attempted === saved.attempted &&
+            session.completedAt &&
+            !saved.completedAt)
+        )
+          sessions.set(session.id, session);
+      }
+      const attempts = new Map(
+        [...disk.data.attempts, ...history.data.attempts].map((attempt) => [
+          attempt.id,
+          attempt,
+        ]),
+      );
+      const saved = sessions.get(state.session.id);
+      if (
+        !saved ||
+        state.session.attempted > saved.attempted ||
+        (state.session.attempted === saved.attempted && !saved.completedAt)
+      )
+        sessions.set(state.session.id, copy(state.session));
+      for (const attempt of state.attempts)
+        attempts.set(attempt.id, copy(attempt));
+      const data = {
+        sessions: [...sessions.values()],
+        attempts: [...attempts.values()],
+      };
+      if (!isValidHistory(data)) {
+        history = {
+          ...history,
+          warning: 'These results could not be saved. You can keep practicing.',
+        };
+        return;
+      }
+      history = write('history', { ...history, data });
+    },
+    getRecentSessions(limit = 50) {
+      const count = Number.isSafeInteger(limit)
+        ? Math.max(0, Math.min(limit, 100))
+        : 50;
+      return copy(history.data.sessions)
+        .sort((a, b) => b.startedAt.localeCompare(a.startedAt))
+        .slice(0, count);
+    },
+  };
+}

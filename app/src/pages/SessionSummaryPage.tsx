@@ -1,14 +1,42 @@
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import { usePracticeSession } from '../hooks/usePracticeSession';
 import { difficultyOptions, operationOptions } from '../utils/practiceOptions';
+import { PracticeHistoryContext } from '../app/practiceHistoryContext';
+import { usePracticeConfiguration } from '../hooks/usePracticeConfiguration';
 
 export default function SessionSummaryPage() {
-  const { state, startSession, error } = usePracticeSession();
+  const { state: currentState, startSession, error } = usePracticeSession();
+  const { setConfiguration } = usePracticeConfiguration();
+  const history = useContext(PracticeHistoryContext);
+  const latestCompleted = history.sessions
+    .filter((session) => session.completedAt)
+    .sort((a, b) => b.completedAt!.localeCompare(a.completedAt!))[0];
+  // Restore completed recaps only; active-card recovery belongs to Phase 18.
+  const state =
+    currentState ??
+    (latestCompleted
+      ? {
+          session: latestCompleted,
+          attempts: history.attempts.filter(
+            (attempt) => attempt.sessionId === latestCompleted.id,
+          ),
+          currentQuestion: null,
+          currentQuestionIndex: latestCompleted.attempted,
+          isActive: false,
+        }
+      : null);
   const navigate = useNavigate();
   if (!state) return <Navigate to="/practice/setup" replace />;
   if (state.isActive) return <Navigate to="/practice/session" replace />;
   const { session, attempts } = state;
+  const configuration = {
+    operations: [...session.operations],
+    difficulty: session.difficulty,
+    sessionLength: session.sessionLength,
+    mode: 'regular' as const,
+  };
   const accuracy = session.attempted
     ? Math.round((session.correct / session.attempted) * 100)
     : 0;
@@ -16,15 +44,10 @@ export default function SessionSummaryPage() {
     (attempt) => attempt.source === 'mistake-review',
   ).length;
   function practiceAgain() {
-    if (
-      startSession({
-        operations: [...session.operations],
-        difficulty: session.difficulty,
-        sessionLength: session.sessionLength,
-        mode: 'regular',
-      })
-    )
+    if (startSession(configuration)) {
+      setConfiguration(configuration);
       navigate('/practice/session');
+    }
   }
   return (
     <PageContainer title="Session complete" eyebrow="Small steps count">
@@ -89,7 +112,11 @@ export default function SessionSummaryPage() {
         >
           Practice Mistakes
         </button>
-        <Link className="button-link button-secondary" to="/practice/setup">
+        <Link
+          className="button-link button-secondary"
+          to="/practice/setup"
+          onClick={() => setConfiguration(configuration)}
+        >
           Change Settings
         </Link>
         <Link className="button-link button-secondary" to="/statistics">
@@ -101,8 +128,8 @@ export default function SessionSummaryPage() {
         challenge.
       </p>
       <p className="field-hint">
-        Your results stay here while this app is open. Saving progress is coming
-        soon.
+        Your results are saved in this browser on this device when storage is
+        available.
       </p>
       <Link className="back-link" to="/">
         Return Home
