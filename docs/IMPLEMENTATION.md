@@ -1,6 +1,6 @@
 # Implementation guide
 
-Paths in this guide are relative to the repository root.
+Source paths in this guide are relative to the `app/` directory. Run development commands from `app/`; production output is `app/dist/`. Historical log and testing entries describe the layout at the time of each check.
 
 ## Question generation
 
@@ -57,4 +57,4 @@ Submitted choices are held in React Context and used to start `/practice/session
 
 React Router serves `/`, `/practice/setup`, `/practice/session`, `/practice/summary`, `/statistics`, and `/settings`, with a fallback for unknown paths. Native links styled as buttons support keyboard navigation and browser history. Page changes update the browser title and move focus to the new heading; a skip link bypasses the header. The development server supports direct-route refreshes. Production hosting still requires an SPA fallback before release.
 
-There is no backend, login, analytics, or collection of personal data. Persistence is planned for browser localStorage in Phase 9. Final deployment should build from repository root and publish `dist/`, with SPA routing configured.
+There is no backend, login, analytics, or collection of personal data. Persistence is planned for browser localStorage in Phase 9. Final deployment should build from `app/` and publish its `dist/` directory, with SPA routing configured.

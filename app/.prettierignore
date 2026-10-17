@@ -1,0 +1,6 @@
+node_modules
+dist
+coverage
+.local
+package-lock.json
+# Formatting scripts name maintained docs explicitly, preserving reference files.

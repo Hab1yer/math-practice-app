@@ -11,6 +11,7 @@ Choose operations and difficulty, answer a question, flip the card, and mark whe
 Use Node.js 22.12 or later. From the repository root:
 
 ```sh
+cd app
 npm ci
 npm run dev
 ```
@@ -18,6 +19,8 @@ npm run dev
 Open [the local app](http://127.0.0.1:5173). The server requires port 5173 to be available.
 
 ## Development
+
+Run these commands inside `app/`. Formatting also checks the README and maintained documentation in `docs/`, while preserving the original specification and checklist.
 
 | Command                | Purpose                                                      |
 | ---------------------- | ------------------------------------------------------------ |
@@ -34,20 +37,27 @@ Open [the local app](http://127.0.0.1:5173). The server requires port 5173 to be
 ## Repository map
 
 ```text
-src/
-  app/                 App setup, routes, shared state, and related tests
-  components/          Shared layout and practice controls
-  hooks/               Access to shared application state
-  pages/               Screens and their interaction tests
-  services/            Question generation and session logic
-  types/               Shared data contracts
-  utils/               Validation, practice options, and math helpers
-  test/                Shared test setup
+app/                   Application package and tool configuration
+  src/
+    app/               App setup, routes, shared state, and related tests
+    components/        Shared layout and practice controls
+    hooks/             Access to shared application state
+    pages/             Screens and their interaction tests
+    services/          Question generation and session logic
+    types/             Shared data contracts
+    utils/             Validation, practice options, and math helpers
+    test/              Shared test setup
+  public/              Static assets
+  package.json         Development commands and dependencies
 docs/                  Requirements, development records, and implementation notes
   verification/        Browser screenshots
 ```
 
-Tests live alongside the code they verify. Tool configuration stays at the root. Generated folders (`node_modules/`, `dist/`, coverage, and `.local/`) are ignored by Git.
+Tests live alongside the code they verify. Tool configuration and generated folders (`node_modules/`, `dist/`, coverage, and `.local/`) live inside `app/`; generated folders are ignored by Git.
+
+## Deployment layout
+
+Set your hosting project's **Root Directory** to `app`, build with `npm run build`, and publish `dist` relative to that directory (`app/dist` from the repository root). Existing hosting projects must update their root-directory setting after this move. Hosting still needs an SPA fallback for application routes.
 
 ## Documentation
 

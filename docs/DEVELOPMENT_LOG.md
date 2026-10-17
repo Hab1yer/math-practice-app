@@ -170,3 +170,13 @@ User requested cleaning up the repository before Phase 9.
 - Updated screenshot links relative to the testing record's new location and preserved the formatter exclusions for both authoritative reference files.
 - Kept source/tests in their established folders and tooling configuration at the root. Generated/local folders remain ignored; no application behavior changed and Phase 9 has not started.
 - Verified moved specification/checklist Git object hashes match the prior originals and all local Markdown links resolve. Full check passed lint, formatting, 172 tests and production build.
+
+## 2026-10-17 — Application package moved into app/
+
+User asked whether package/config files could be organized outside the repository root, then authorized the proposed app/ layout with “do that”.
+
+- Stopped the previous development server and moved source, public assets, npm manifest/lockfile, HTML, tool configuration and ignored local/generated folders into app/. Root now contains README.md, app/, docs/ and Git settings.
+- Preserved relative imports and tool configuration; updated formatting commands to include maintained documentation outside the package while excluding original references. Kept package-lock dependencies unchanged.
+- Updated README and implementation guide for running commands inside app/ and setting a hosting project's root directory to app with dist as output. No external hosting configuration was modified.
+- Full check from the moved package passed lint, formatting, 172 tests and production build with unchanged production asset hashes/sizes. Restarted the server successfully from app/ and verified HTTP 200 for HTML and the transformed entry module. This is an HTTP smoke check, not new browser UI verification.
+- Verified original reference/checklist hashes and generated-folder Git exclusions. Phase 9 remains pending.

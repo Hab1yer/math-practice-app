@@ -1,5 +1,14 @@
 # Testing record
 
+Current layout: run all npm commands from `app/`. Earlier entries describe paths as they existed when those checks ran.
+
+## 2026-10-17 — App directory move
+
+- Moved application source, package/lockfile, HTML entry point, tool configuration and existing generated dependencies/build into `app/`. No source imports or routes changed.
+- `npm run check` from `app/` passed lint, formatting (including maintained repository documentation), 172 tests across 15 files and production build. The production asset hashes and sizes match the prior build.
+- Restarted the development server from `app/`; both the HTML page and transformed `/src/main.tsx` returned HTTP 200. This was an HTTP smoke check, not another manual browser session.
+- Verified generated folders stay ignored and the original specification/checklist Git object hashes remain unchanged. README now documents `cd app` and deployment root/output settings. External hosting settings were not changed.
+
 ## Phase 1
 
 Agent verification on 2026-10-15 using Node 24.14.1 and npm 11.11.0:
