@@ -16,7 +16,7 @@ describe('application navigation', () => {
   it.each([
     ['Start Practice', 'Choose your practice'],
     ['View Statistics', 'Statistics'],
-    ['Settings', 'Make it your own'],
+    ['Settings', 'Settings'],
   ])('opens %s from home and returns home', async (action, title) => {
     const user = userEvent.setup();
     renderRoute();

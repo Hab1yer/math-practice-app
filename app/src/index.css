@@ -683,6 +683,59 @@ button.button-link:disabled {
   gap: 18px;
   margin-top: 32px;
 }
+.settings-section {
+  margin-top: 30px;
+}
+.settings-section h2 {
+  font-size: 26px;
+  margin: 0 0 14px;
+}
+.settings-section .preferences {
+  margin-top: 16px;
+}
+.settings-operations {
+  border: 0;
+  padding: 0;
+  margin: 22px 0;
+  min-width: 0;
+}
+.settings-operations legend {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+.settings-selects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 18px;
+}
+.settings-selects label {
+  display: grid;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+.settings-selects select {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px;
+  font: inherit;
+  font-size: 17px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 10px;
+}
+.settings-data {
+  border-top: 1px solid var(--line);
+  padding-top: 26px;
+}
+.settings-data > p {
+  line-height: 1.6;
+}
+.settings-data .button-link {
+  margin-top: 0;
+}
 
 .session-context {
   font-size: 18px;
@@ -930,6 +983,8 @@ button.button-link:disabled {
   z-index: 20;
 }
 .confirm-dialog {
+  max-height: calc(100svh - 40px);
+  overflow-y: auto;
   max-width: 560px;
   width: 100%;
   background: var(--paper);

@@ -8,15 +8,17 @@ import SessionLengthSelector from '../components/practice/SessionLengthSelector'
 import { usePracticeConfiguration } from '../hooks/usePracticeConfiguration';
 import type { PracticeConfiguration } from '../types/session';
 import { usePracticeSession } from '../hooks/usePracticeSession';
+import { useAppPreferences } from '../hooks/useAppPreferences';
 
 export default function PracticeSetupPage() {
   const { configuration, setConfiguration } = usePracticeConfiguration();
   const { startSession: beginSession, error } = usePracticeSession();
+  const { preferences } = useAppPreferences();
   const [draft, setDraft] = useState<PracticeConfiguration>(
     configuration ?? {
-      operations: ['addition'],
-      difficulty: 1,
-      sessionLength: 10,
+      operations: [...preferences.defaultOperations],
+      difficulty: preferences.defaultDifficulty,
+      sessionLength: preferences.defaultSessionLength,
       mode: 'regular',
     },
   );

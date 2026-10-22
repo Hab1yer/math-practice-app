@@ -2,6 +2,11 @@ import type { AppSettings } from '../types/settings';
 import type { PracticeSessionState } from '../types/session';
 import { isRecord, isValidHistory, isValidSettings } from './storageValidation';
 import type { PracticeHistory } from './storageValidation';
+import {
+  clearApplicationStorage,
+  recoverInterruptedClear,
+} from './storageClear';
+import type { BrowserStorage } from './storageClear';
 
 export const STORAGE_VERSION = 1;
 export const STORAGE_KEYS = {
@@ -18,7 +23,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   defaultOperations: ['addition'],
   masteryThreshold: 3,
 };
-type StorageAccess = () => Pick<Storage, 'getItem' | 'setItem'>;
+type StorageAccess = () => BrowserStorage;
 type Category = keyof typeof STORAGE_KEYS;
 interface Loaded<T> {
   data: T;
@@ -30,11 +35,30 @@ const copy = <T>(value: T): T => structuredClone(value);
 export function createStorageService(
   access: StorageAccess = () => window.localStorage,
 ) {
+  let recoveryBlocked = false;
+  try {
+    recoverInterruptedClear(access());
+  } catch {
+    // Normal denied-storage reads still get their usual warning; a pending journal blocks all writes.
+    try {
+      recoveryBlocked =
+        access().getItem('mathPractice.clearTransaction') !== null;
+    } catch {
+      /* read() reports denied access */
+    }
+  }
   function read<T>(
     category: Category,
     fallback: T,
     validate: (value: unknown) => value is T,
   ): Loaded<T> {
+    if (recoveryBlocked)
+      return {
+        data: copy(fallback),
+        readOnly: true,
+        warning:
+          'An interrupted data clear could not be recovered. Reload when browser storage is available.',
+      };
     try {
       const raw = access().getItem(STORAGE_KEYS[category]);
       if (raw === null)
@@ -205,6 +229,41 @@ export function createStorageService(
         discardedSessions.add(session.id);
       history = cleared;
       return true;
+    },
+    clearAllData() {
+      if (recoveryBlocked) return false;
+      try {
+        const resetAt = new Date().toISOString();
+        if (!clearApplicationStorage(access(), resetAt, STORAGE_VERSION))
+          throw new Error('Clear failed');
+        for (const session of history.data.sessions)
+          discardedSessions.add(session.id);
+        settings = {
+          data: copy(DEFAULT_SETTINGS),
+          warning: null,
+          readOnly: false,
+        };
+        history = {
+          data: { sessions: [], attempts: [], resetAt },
+          warning: null,
+          readOnly: false,
+        };
+        return true;
+      } catch {
+        history = {
+          ...history,
+          warning:
+            'Application data could not be fully cleared. Reload before trying again.',
+        };
+        // If rollback was blocked, prevent later actions from overwriting its recovery journal.
+        try {
+          recoveryBlocked =
+            access().getItem('mathPractice.clearTransaction') !== null;
+        } catch {
+          recoveryBlocked = true;
+        }
+        return false;
+      }
     },
     getRecentSessions(limit = 50) {
       const count = Number.isSafeInteger(limit)

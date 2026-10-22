@@ -3,7 +3,8 @@ import type { ReactNode } from 'react';
 import type { PracticeConfiguration } from '../types/session';
 import { PracticeConfigurationContext } from './practiceConfigurationContext';
 import { AppPreferencesContext } from './appPreferencesContext';
-import type { CardPreferences } from './appPreferencesContext';
+import type { AppSettings } from '../types/settings';
+import { isValidSettings } from '../services/storageValidation';
 import PracticeSessionProvider from './PracticeSessionProvider';
 import { createStorageService } from '../services/storageService';
 import type { PracticeSessionState } from '../types/session';
@@ -19,12 +20,19 @@ export default function AppProvider({ children }: { children: ReactNode }) {
   const [sessionGeneration, setSessionGeneration] = useState(0);
   const currentPreferences = useRef(preferences);
   const [storageWarning, setStorageWarning] = useState(storage.getWarning);
-  function updatePreferences(updates: Partial<CardPreferences>) {
+  function updatePreferences(updates: Partial<AppSettings>) {
     const next = { ...currentPreferences.current, ...updates };
+    if (!isValidSettings(next)) return;
     currentPreferences.current = next;
     setPreferences(next);
     storage.saveSettings(next);
     setStorageWarning(storage.getWarning());
+    if (
+      'defaultOperations' in updates ||
+      'defaultDifficulty' in updates ||
+      'defaultSessionLength' in updates
+    )
+      setConfiguration(null);
   }
   function persistSession(state: PracticeSessionState) {
     storage.saveSession(state);
@@ -40,6 +48,19 @@ export default function AppProvider({ children }: { children: ReactNode }) {
     }
     return reset;
   }
+  function clearAllData() {
+    const cleared = storage.clearAllData();
+    setStorageWarning(storage.getWarning());
+    if (cleared) {
+      const defaults = storage.getSettings();
+      currentPreferences.current = defaults;
+      setPreferences(defaults);
+      setHistory(storage.getHistory());
+      setConfiguration(null);
+      setSessionGeneration((generation) => generation + 1);
+    }
+    return cleared;
+  }
   return (
     <PracticeConfigurationContext.Provider
       value={{ configuration, setConfiguration }}
@@ -52,7 +73,9 @@ export default function AppProvider({ children }: { children: ReactNode }) {
         }}
       >
         <PracticeHistoryContext.Provider value={history}>
-          <PracticeHistoryActionsContext.Provider value={{ resetHistory }}>
+          <PracticeHistoryActionsContext.Provider
+            value={{ resetHistory, clearAllData }}
+          >
             <PracticeSessionProvider
               key={sessionGeneration}
               onPersist={persistSession}

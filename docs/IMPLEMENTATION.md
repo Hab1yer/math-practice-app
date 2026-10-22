@@ -33,7 +33,17 @@ Consecutive identical expressions are avoided with five bounded generation attem
 
 The active question lives in React Context; refreshing ends that interaction without deleting saved answered attempts. Switching routes retains the current question but not an unsubmitted answer selection. Explicitly starting another session replaces the active one while preserving prior history. Active-card recovery and accidental-navigation protection remain Phase 18. Missing active-session data redirects to setup. The summary can restore the most recently completed saved session; with neither current nor saved completed data, it redirects to setup. An active session redirects away from the summary.
 
-Settings controls card animations and explanations immediately through React Context and saves them to browser storage. Turning motion off sets the card transition to zero; the CSS also respects `prefers-reduced-motion`. The two faces share a grid area, with hidden backfaces preventing mirrored text. Inactive faces are excluded from keyboard and assistive-technology interaction. Additional Settings controls and default-practice integration remain Phase 11.
+Settings controls sound, card animations and explanations immediately through React Context and saves them to browser storage. Turning motion off sets the card transition to zero; CSS also respects `prefers-reduced-motion`. The two faces share a grid area, with hidden backfaces preventing mirrored text. Inactive faces are excluded from keyboard and assistive-technology interaction.
+
+## Settings, defaults and clearing application data
+
+Settings automatically saves card preferences and default operations/difficulty/session length. At least one default operation remains selected. A newly opened setup uses these defaults unless it is explicitly editing/restarting a prior configuration. Changing defaults invalidates previously submitted setup choices for the next setup, while leaving the current active session unchanged. Per-session overrides never overwrite saved defaults.
+
+Sound is off by default. When enabled, a self-report schedules a quiet sine tone (660 Hz for right, 330 Hz for wrong) with a short fading gain envelope. Selection and reveal do not play sounds. Each AudioContext closes after its tone; missing/denied audio support does not block recording or advancing. Browser audio APIs are used without downloading media. Mastery-threshold and feedback-effect controls remain part of their later review/polish phases.
+
+Clear All Application Data uses a separate strong confirmation from Reset Statistics. Success removes settings, history, saved mistake patterns, aggregate/legacy keys and the temporary recovery journal, restores default preferences, discards active/setup state and navigates home. Only a blank history envelope/reset marker remains to prevent erased sessions being merged back. Unrelated browser keys are untouched. This explicit all-data action can erase app data from a newer schema; ordinary saving and statistics reset still preserve unsupported future schemas.
+
+Because settings and history occupy separate keys, clearing first saves a journal of the known app keys, then deletes them and writes the blank history marker. Any failure attempts rollback. An interrupted clear is rolled back before the next startup loads settings/history. If recovery itself is blocked, normal writes pause and a friendly notice requests reload rather than overwriting the recovery data. A malformed journal cannot target arbitrary keys. The journal requires storage space; if it cannot be saved (for example, quota is exhausted), nothing is deleted. This is recovery protection, not a simultaneous cross-tab transaction guarantee.
 
 ## Session summary
 
@@ -47,7 +57,7 @@ The initial migration accepts validated unversioned/version-0 records, and upgra
 
 Storage access, read and write failures are caught. Capacity failure preserves the previous disk snapshot and new in-memory results, warns the user and retries on a later save. Settings failures do not block history saving, or vice versa. The store exposes defensive copies and a recent-session reader (50 by default, at most 100, newest first). Full history remains retained rather than silently deleting attempts; long-term archiving/usage measurement remains Phase 21. Sequential writes merge the latest stored history and preserve newer totals; simultaneous cross-tab writes are not transactional and are not claimed to be solved by localStorage.
 
-Saved history loads into a dedicated React Context for recaps and statistics. Existing settings controls persist their selected values; other setting fields are validated/stored with defaults until their UI is implemented. The active question, card selection and reveal state are not stored yet.
+Saved history loads into a dedicated React Context for recaps and statistics. Settings controls persist their selected values; fields for later mastery/feedback features remain validated/stored with defaults until their UI is implemented. The active question, card selection and reveal state are not stored yet.
 
 ## Statistics and reset
 
@@ -69,9 +79,9 @@ Fisher–Yates shuffles the final four choices. Tests exercise zero/one answers,
 
 ## Practice configuration
 
-The setup form defaults to addition, Beginner, 10 questions, and regular practice. Native checkboxes allow mixed operations; Select All chooses all four. Native radio groups enforce one difficulty and one session length. Start Session is disabled without an operation, with an explanatory message. Mistake review is disabled with an explanation until practice history exists and review is implemented.
+Without saved preferences, setup starts with addition, Beginner, 10 questions and regular practice. Otherwise it loads the chosen defaults from Settings. Native checkboxes allow mixed operations; Select All chooses all four. Native radio groups enforce one difficulty and one session length. Start Session is disabled without an operation, with an explanatory message. Mistake review is disabled until tracking/review is implemented.
 
-Submitted setup choices are held in React Context and used to start `/practice/session`. Returning to setup restores those choices for editing during the current app lifetime; Start Session validates them and explicitly starts a fresh session. The resulting session configuration is saved with history, but the setup draft is not persisted and leaving setup discards unsubmitted edits. Direct session visits without an active session redirect to setup. Settings-based setup defaults and active-card refresh recovery remain scheduled work.
+Submitted setup choices are held in React Context and used to start `/practice/session`. Returning to setup restores those choices for editing during the current app lifetime unless defaults changed; Start Session validates them and explicitly starts a fresh session. The resulting session configuration is saved with history, but the setup draft is not persisted and leaving setup discards unsubmitted edits. Direct session visits without an active session redirect to setup. Active-card refresh recovery remains Phase 18.
 
 ## Navigation
 

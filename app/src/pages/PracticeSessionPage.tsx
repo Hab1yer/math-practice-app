@@ -6,6 +6,7 @@ import EndSessionDialog from '../components/practice/EndSessionDialog';
 import { usePracticeSession } from '../hooks/usePracticeSession';
 import { useAppPreferences } from '../hooks/useAppPreferences';
 import { difficultyOptions, operationOptions } from '../utils/practiceOptions';
+import { playAnswerSound } from '../services/soundService';
 
 export default function PracticeSessionPage() {
   const { state, recordResult, endSession, error } = usePracticeSession();
@@ -82,13 +83,15 @@ export default function PracticeSessionPage() {
             totalQuestions={session.sessionLength}
             animationEnabled={preferences.cardAnimationEnabled}
             showExplanations={preferences.showExplanations}
-            onResult={(selfReportedCorrect, selectedAnswer) =>
+            onResult={(selfReportedCorrect, selectedAnswer) => {
+              if (preferences.soundEnabled)
+                playAnswerSound(selfReportedCorrect);
               recordResult({
                 questionId: currentQuestion.id,
                 selectedAnswer,
                 selfReportedCorrect,
-              })
-            }
+              });
+            }}
           />
         ) : (
           <p role="alert">
