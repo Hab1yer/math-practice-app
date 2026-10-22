@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import AppLayout from '../components/layout/AppLayout';
 import HomePage from '../pages/HomePage';
-import ComingSoonPage from '../pages/ComingSoonPage';
+import StatisticsPage from '../pages/StatisticsPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import PracticeSetupPage from '../pages/PracticeSetupPage';
 import PracticeSessionPage from '../pages/PracticeSessionPage';
@@ -16,15 +16,7 @@ export default function AppRoutes() {
         <Route path="practice/setup" element={<PracticeSetupPage />} />
         <Route path="practice/session" element={<PracticeSessionPage />} />
         <Route path="practice/summary" element={<SessionSummaryPage />} />
-        <Route
-          path="statistics"
-          element={
-            <ComingSoonPage
-              title="See your progress"
-              description="Discover how your practice adds up."
-            />
-          }
-        />
+        <Route path="statistics" element={<StatisticsPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>

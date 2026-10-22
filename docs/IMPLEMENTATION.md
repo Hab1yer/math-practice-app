@@ -37,7 +37,7 @@ Settings controls card animations and explanations immediately through React Con
 
 ## Session summary
 
-Completed sessions show attempted/correct/incorrect totals, rounded self-reported accuracy (0% when empty), configured operations, difficulty, and the number of completed review attempts. Practice Again starts a fresh regular session with the same operations, difficulty and length; Change Settings opens practice setup using that recap's configuration, including after reopening a saved summary. View Statistics links to the existing placeholder until Phase 10, and Return Home opens the home page. Practice Mistakes is disabled with an explanation until review mode is implemented in Phase 14. Reloading or reopening the summary restores the most recent completed saved recap.
+Completed sessions show attempted/correct/incorrect totals, rounded self-reported accuracy (0% when empty), configured operations, difficulty, and the number of completed review attempts. Practice Again starts a fresh regular session with the same operations, difficulty and length; Change Settings opens practice setup using that recap's configuration, including after reopening a saved summary. View Statistics opens the saved progress dashboard, and Return Home opens the home page. Practice Mistakes is disabled with an explanation until review mode is implemented in Phase 14. Reloading or reopening the summary restores the most recent completed saved recap.
 
 ## Browser storage
 
@@ -47,7 +47,17 @@ The initial migration accepts validated unversioned/version-0 records, and upgra
 
 Storage access, read and write failures are caught. Capacity failure preserves the previous disk snapshot and new in-memory results, warns the user and retries on a later save. Settings failures do not block history saving, or vice versa. The store exposes defensive copies and a recent-session reader (50 by default, at most 100, newest first). Full history remains retained rather than silently deleting attempts; long-term archiving/usage measurement remains Phase 21. Sequential writes merge the latest stored history and preserve newer totals; simultaneous cross-tab writes are not transactional and are not claimed to be solved by localStorage.
 
-Saved history loads into a dedicated React Context for the recap and future statistics. Existing settings controls persist their selected values; other setting fields are validated/stored with defaults until their UI is implemented. The active question, card selection and reveal state are not stored yet.
+Saved history loads into a dedicated React Context for recaps and statistics. Existing settings controls persist their selected values; other setting fields are validated/stored with defaults until their UI is implemented. The active question, card selection and reveal state are not stored yet.
+
+## Statistics and reset
+
+`src/services/statisticsService.ts` derives overall, operation and difficulty totals directly from validated attempts. Every report contributes once; answer equality is irrelevant. Accuracy is correct/attempted × 100, rounded to a whole percent, with 0% for an empty bucket. React memoizes these calculations while the history arrays are unchanged; no duplicate aggregate statistics are persisted.
+
+The Statistics page shows all four operations and levels, including zero buckets, and up to ten recent sessions sorted by start time (newest first). Dates use the viewer's locale/timezone. Recent sessions include completed, currently active and unfinished records, with only reported attempts counted. Separate empty states cover no attempts and no sessions. Cards stack on narrow screens.
+
+Reset Statistics asks for explicit confirmation and states that history is erased, the current session is discarded and settings stay unchanged. It atomically writes an empty history with a validated reset timestamp; only a successful write clears React history and remounts the session provider to drop stale active/summary state. Derived aggregates immediately become zero. Failed writes preserve displayed/saved history and show an error; newer schema versions remain protected. Settings and unrelated browser keys are untouched.
+
+The reset marker and discarded-session IDs prevent an already-open store from merging erased sessions back during later sequential saves. A new session can save even when created in the reset's same millisecond. Simultaneous cross-tab operations still have localStorage's nontransactional limitations; broad concurrency handling remains outside this phase. End Session and Reset Statistics share a confirmation dialog with keyboard containment, cancel autofocus and Escape support; cancelling returns focus to the opening button.
 
 ## Multiple-choice answer generation
 
@@ -61,10 +71,10 @@ Fisher–Yates shuffles the final four choices. Tests exercise zero/one answers,
 
 The setup form defaults to addition, Beginner, 10 questions, and regular practice. Native checkboxes allow mixed operations; Select All chooses all four. Native radio groups enforce one difficulty and one session length. Start Session is disabled without an operation, with an explanatory message. Mistake review is disabled with an explanation until practice history exists and review is implemented.
 
-Submitted setup choices are held in React Context and used to start `/practice/session`. Returning to setup restores those choices for editing during the current app lifetime; Start Session validates them and explicitly starts a fresh session. The resulting session configuration is saved with history, but the setup draft is not persisted and leaving setup discards unsubmitted edits. Direct session visits without an active session redirect to setup. Historical statistics, settings-based setup defaults, and active-card refresh recovery remain scheduled work.
+Submitted setup choices are held in React Context and used to start `/practice/session`. Returning to setup restores those choices for editing during the current app lifetime; Start Session validates them and explicitly starts a fresh session. The resulting session configuration is saved with history, but the setup draft is not persisted and leaving setup discards unsubmitted edits. Direct session visits without an active session redirect to setup. Settings-based setup defaults and active-card refresh recovery remain scheduled work.
 
 ## Navigation
 
-React Router serves `/`, `/practice/setup`, `/practice/session`, `/practice/summary`, `/statistics`, and `/settings`, with a fallback for unknown paths. Native links styled as buttons support keyboard navigation and browser history. Page changes update the browser title and move focus to the new heading; a skip link bypasses the header. The development server supports direct-route refreshes. Production hosting still requires an SPA fallback before release.
+React Router serves `/`, `/practice/setup`, `/practice/session`, `/practice/summary`, `/statistics`, and `/settings`, with a fallback for unknown paths. Native links styled as buttons support keyboard navigation and browser history. Page changes update the browser title and move focus to the new heading; a skip link bypasses the header. The development server supports direct-route refreshes, and app/vercel.json supplies Vercel's SPA fallback. Hosted route verification is separate from local verification.
 
 There is no backend, login, analytics, or collection of personal data. Persistence uses localStorage for this browser and origin; changing devices, profiles, ports or domains does not transfer history. Clearing browser data removes progress. Final deployment should build from `app/` and publish its `dist/` directory, with SPA routing configured.

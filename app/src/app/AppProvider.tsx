@@ -8,6 +8,7 @@ import PracticeSessionProvider from './PracticeSessionProvider';
 import { createStorageService } from '../services/storageService';
 import type { PracticeSessionState } from '../types/session';
 import { PracticeHistoryContext } from './practiceHistoryContext';
+import { PracticeHistoryActionsContext } from './practiceHistoryActionsContext';
 
 export default function AppProvider({ children }: { children: ReactNode }) {
   const [configuration, setConfiguration] =
@@ -15,6 +16,7 @@ export default function AppProvider({ children }: { children: ReactNode }) {
   const [storage] = useState(() => createStorageService());
   const [preferences, setPreferences] = useState(() => storage.getSettings());
   const [history, setHistory] = useState(storage.getHistory);
+  const [sessionGeneration, setSessionGeneration] = useState(0);
   const currentPreferences = useRef(preferences);
   const [storageWarning, setStorageWarning] = useState(storage.getWarning);
   function updatePreferences(updates: Partial<CardPreferences>) {
@@ -29,6 +31,15 @@ export default function AppProvider({ children }: { children: ReactNode }) {
     setHistory(storage.getHistory());
     setStorageWarning(storage.getWarning());
   }
+  function resetHistory() {
+    const reset = storage.resetHistory();
+    setStorageWarning(storage.getWarning());
+    if (reset) {
+      setHistory(storage.getHistory());
+      setSessionGeneration((generation) => generation + 1);
+    }
+    return reset;
+  }
   return (
     <PracticeConfigurationContext.Provider
       value={{ configuration, setConfiguration }}
@@ -41,9 +52,14 @@ export default function AppProvider({ children }: { children: ReactNode }) {
         }}
       >
         <PracticeHistoryContext.Provider value={history}>
-          <PracticeSessionProvider onPersist={persistSession}>
-            {children}
-          </PracticeSessionProvider>
+          <PracticeHistoryActionsContext.Provider value={{ resetHistory }}>
+            <PracticeSessionProvider
+              key={sessionGeneration}
+              onPersist={persistSession}
+            >
+              {children}
+            </PracticeSessionProvider>
+          </PracticeHistoryActionsContext.Provider>
         </PracticeHistoryContext.Provider>
       </AppPreferencesContext.Provider>
     </PracticeConfigurationContext.Provider>

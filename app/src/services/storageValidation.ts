@@ -7,6 +7,7 @@ import { isValidQuestion } from '../utils/validation';
 export interface PracticeHistory {
   sessions: PracticeSession[];
   attempts: PracticeAttempt[];
+  resetAt?: string;
 }
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
@@ -89,6 +90,7 @@ export function isValidAttempt(value: unknown): value is PracticeAttempt {
 export function isValidHistory(value: unknown): value is PracticeHistory {
   if (
     !isRecord(value) ||
+    (value.resetAt !== undefined && !date(value.resetAt)) ||
     !Array.isArray(value.sessions) ||
     !Array.isArray(value.attempts) ||
     ![...value.sessions].every(isValidSession) ||

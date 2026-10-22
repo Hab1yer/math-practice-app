@@ -72,6 +72,7 @@ export function createStorageService(
     { sessions: [], attempts: [] },
     isValidHistory,
   );
+  const discardedSessions = new Set<string>();
   function write<T>(category: Category, loaded: Loaded<T>): Loaded<T> {
     if (loaded.readOnly) return loaded;
     try {
@@ -122,6 +123,22 @@ export function createStorageService(
         history = { ...history, readOnly: true, warning: disk.warning };
         return;
       }
+      if (disk.data.resetAt && disk.data.resetAt !== history.data.resetAt) {
+        for (const session of history.data.sessions)
+          discardedSessions.add(session.id);
+        history = disk;
+      }
+      if (
+        discardedSessions.has(state.session.id) ||
+        (history.data.resetAt && state.session.startedAt < history.data.resetAt)
+      ) {
+        history = {
+          ...history,
+          warning:
+            'Practice history was reset. Start a new session to save new answers.',
+        };
+        return;
+      }
       const sessions = new Map(
         disk.data.sessions.map((session) => [session.id, session]),
       );
@@ -152,6 +169,7 @@ export function createStorageService(
       for (const attempt of state.attempts)
         attempts.set(attempt.id, copy(attempt));
       const data = {
+        ...(history.data.resetAt ? { resetAt: history.data.resetAt } : {}),
         sessions: [...sessions.values()],
         attempts: [...attempts.values()],
       };
@@ -163,6 +181,30 @@ export function createStorageService(
         return;
       }
       history = write('history', { ...history, data });
+    },
+    resetHistory() {
+      const disk = read<PracticeHistory>(
+        'history',
+        { sessions: [], attempts: [] },
+        isValidHistory,
+      );
+      if (disk.readOnly || history.readOnly) {
+        history = { ...history, warning: disk.warning ?? history.warning };
+        return false;
+      }
+      const cleared = write<PracticeHistory>('history', {
+        data: { sessions: [], attempts: [], resetAt: new Date().toISOString() },
+        warning: null,
+        readOnly: false,
+      });
+      if (cleared.warning) {
+        history = { ...history, warning: cleared.warning };
+        return false;
+      }
+      for (const session of [...history.data.sessions, ...disk.data.sessions])
+        discardedSessions.add(session.id);
+      history = cleared;
+      return true;
     },
     getRecentSessions(limit = 50) {
       const count = Number.isSafeInteger(limit)

@@ -30,6 +30,79 @@ const put = (key: string, data: unknown, version = 1) =>
   localStorage.setItem(key, JSON.stringify({ version, data }));
 
 describe('versioned browser storage', () => {
+  it('allows a fresh session started in the same millisecond as reset without reviving the old one', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date('2026-10-22T10:00:00.000Z'));
+      const store = createStorageService();
+      const old = answer();
+      store.saveSession(old);
+      expect(store.resetHistory()).toBe(true);
+      store.saveSession(old);
+      expect(createStorageService().getHistory().attempts).toEqual([]);
+      const fresh = answer();
+      store.saveSession(fresh);
+      expect(createStorageService().getHistory().attempts).toEqual(
+        fresh.attempts,
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it('resets history persistently without touching settings or unrelated keys', () => {
+    const store = createStorageService();
+    store.saveSettings({ ...DEFAULT_SETTINGS, showExplanations: false });
+    const settings = localStorage.getItem(STORAGE_KEYS.settings);
+    localStorage.setItem('another-app', 'keep');
+    store.saveSession(endPracticeSession(answer()));
+    expect(store.resetHistory()).toBe(true);
+    expect(store.getHistory()).toMatchObject({ sessions: [], attempts: [] });
+    expect(createStorageService().getHistory()).toMatchObject({
+      sessions: [],
+      attempts: [],
+    });
+    expect(localStorage.getItem(STORAGE_KEYS.settings)).toBe(settings);
+    expect(localStorage.getItem('another-app')).toBe('keep');
+  });
+  it('preserves history when a reset write fails or a future schema is present', () => {
+    const store = createStorageService();
+    store.saveSession(answer());
+    const original = localStorage.getItem(STORAGE_KEYS.history);
+    const spy = vi
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(() => {
+        throw new DOMException('Blocked', 'SecurityError');
+      });
+    expect(store.resetHistory()).toBe(false);
+    expect(store.getHistory().attempts).toHaveLength(1);
+    expect(localStorage.getItem(STORAGE_KEYS.history)).toBe(original);
+    spy.mockRestore();
+    put(STORAGE_KEYS.history, { future: true }, 99);
+    expect(store.resetHistory()).toBe(false);
+    expect(
+      JSON.parse(localStorage.getItem(STORAGE_KEYS.history)!).version,
+    ).toBe(99);
+  });
+  it('does not resurrect erased history when another already-open tab saves a stale session', () => {
+    vi.useFakeTimers();
+    try {
+      vi.setSystemTime(new Date('2026-10-22T10:00:00.000Z'));
+      const store = createStorageService();
+      const old = answer();
+      store.saveSession(old);
+      const otherTab = createStorageService();
+      vi.advanceTimersByTime(1000);
+      expect(store.resetHistory()).toBe(true);
+      otherTab.saveSession(old);
+      expect(otherTab.getWarning()).toMatch(/history was reset/);
+      expect(createStorageService().getHistory().attempts).toEqual([]);
+      vi.advanceTimersByTime(1000);
+      otherTab.saveSession(answer());
+      expect(createStorageService().getHistory().attempts).toHaveLength(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
   it('uses defaults without writing or touching unrelated browser data', () => {
     localStorage.setItem('other-app', 'keep');
     const store = createStorageService();

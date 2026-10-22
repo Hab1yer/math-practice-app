@@ -15,7 +15,7 @@ function renderRoute(path = '/') {
 describe('application navigation', () => {
   it.each([
     ['Start Practice', 'Choose your practice'],
-    ['View Statistics', 'See your progress'],
+    ['View Statistics', 'Statistics'],
     ['Settings', 'Make it your own'],
   ])('opens %s from home and returns home', async (action, title) => {
     const user = userEvent.setup();
@@ -36,7 +36,7 @@ describe('application navigation', () => {
         screen.getByRole('checkbox', { name: /Card animations/ }),
       ).toBeChecked();
     } else {
-      expect(screen.getByText('Coming soon')).toBeVisible();
+      expect(screen.getByText('No answers recorded yet.')).toBeVisible();
     }
     expect(document.title).toBe(`${title} | Math Practice`);
     await user.click(screen.getByRole('link', { name: 'Return Home' }));

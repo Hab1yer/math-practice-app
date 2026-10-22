@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 interface PageContainerProps {
   title: string;
-  eyebrow: string;
+  eyebrow?: string;
   children: ReactNode;
 }
 
@@ -26,7 +26,7 @@ export default function PageContainer({
       aria-labelledby="page-title"
       tabIndex={-1}
     >
-      <p className="eyebrow">{eyebrow}</p>
+      {eyebrow && <p className="eyebrow">{eyebrow}</p>}
       <h1 id="page-title" ref={headingRef} tabIndex={-1}>
         {title}
       </h1>
