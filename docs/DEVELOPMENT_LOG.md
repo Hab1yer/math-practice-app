@@ -193,3 +193,11 @@ User prompt: “Ok, let us proceed with phase 9”. Before this phase, user expl
 - Live browser saved/reloaded settings; completed a five-card mixed 5/3/2 session; reloaded and closed/reopened the tab with identical saved summary totals and 60% accuracy. Verified settings in the fresh tab, restored both toggles to on, and checked the console (no captured errors). Saved a screenshot; local verification attempts remain stored on this origin.
 - Full browser-process restart was not performed. Left that checklist verification unchecked and documented exact manual steps. Active-session recovery, simultaneous cross-tab concurrency guarantees, large-history archiving and additional setting controls remain later work. No Phase 10 items were changed.
 - Final review refined restored-recap actions so Change Settings and Practice Again also populate setup configuration from the saved session. Verified the nondefault configuration through remount tests and the live Change Settings flow, then reran the full check.
+
+## 2026-10-22 — Vercel routing preparation
+
+User asked whether vercel.json needed to be added before deploying.
+
+- Added app/vercel.json using Vercel's documented Vite SPA rewrite to /index.html. Its location matches the required Vercel Root Directory of app.
+- Updated deployment instructions. This prepares routing; it does not deploy the site or confirm hosted route behavior. Application source and dependencies are unchanged.
+- Checked JSON parsing, formatting and production build. Hosted direct-route/refresh verification remains a post-deployment check.

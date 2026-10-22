@@ -57,7 +57,7 @@ Tests live alongside the code they verify. Tool configuration and generated fold
 
 ## Deployment layout
 
-Set your hosting project's **Root Directory** to `app`, build with `npm run build`, and publish `dist` relative to that directory (`app/dist` from the repository root). Existing hosting projects must update their root-directory setting after this move. Hosting still needs an SPA fallback for application routes.
+Set your hosting project's **Root Directory** to `app`, build with `npm run build`, and publish `dist` relative to that directory (`app/dist` from the repository root). Existing hosting projects must update their root-directory setting after this move. `app/vercel.json` supplies Vercel's SPA routing fallback so direct visits and refreshes on application routes load the React app. Verify these routes on the deployed URL after publishing.
 
 ## Documentation
 
