@@ -26,7 +26,7 @@ Release target: CSE4095 / math-practice-app, GitHub Hab1yer/math-practice-app, m
 
 ## Deployment record
 
-The existing production project and main-branch Git integration have been verified. Publication and hosted-route checks are recorded after the release push in TESTING.md. A successful local build alone is not hosted verification.
+Production deployment dpl_A3yTFsjEQpjttAFj9AEuGfPskAgf is READY for main commit ae5e06ce82cffbb47bd4d52ad899d553b0425da5. Live URL: https://math-practice-app-pi.vercel.app/. Hosted direct routes, missing-session redirects, unknown-route fallback, preference persistence, mobile reflow and console checks passed. TESTING.md records the exact scope. A subsequent documentation-only commit records this outcome without changing application code.
 
 ## Repeatable release checks
 

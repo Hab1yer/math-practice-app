@@ -261,3 +261,5 @@ User prompt: “Please proceed with the rest of the phases”. Continued from th
 - Current implementation and verification details are in IMPLEMENTATION.md, TESTING.md and RELEASE.md. The original specification remains unchanged. Unavailable browser, screen-reader, zoom/font, slow-device and full-process-restart checks remain open.
 
 - Final pre-release check passed all 335 tests in 32 files, lint, formatting, TypeScript and the production build. Author identity remains repository-local Hab1yer. Chrome preference persistence was verified and restored to defaults.
+
+- Released commit ae5e06c through the existing main-branch Vercel integration. Confirmed READY and expected production aliases, then verified hosted direct routes, fallback, session redirects, preference persistence, narrow reflow and a clean console. Deployment evidence is recorded in TESTING.md; browser/accessibility/device manual follow-ups remain explicitly open.

@@ -879,11 +879,11 @@ Archiving was not necessary for the measured 5,000-attempt workload. All origina
 ### 89. Deploy the Application
 
 - [x] Select a hosting service.
-- [ ] Deploy the production build.
-- [ ] Verify every route.
-- [ ] Verify local-storage persistence.
-- [ ] Verify responsive behavior.
-- [ ] Verify that no development errors appear in the console.
+- [x] Deploy the production build.
+- [x] Verify every route.
+- [x] Verify local-storage persistence.
+- [x] Verify responsive behavior.
+- [x] Verify that no development errors appear in the console.
 
 ---
 

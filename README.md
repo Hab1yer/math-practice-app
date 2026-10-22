@@ -6,6 +6,8 @@ Choose operations and difficulty, answer a question, flip the card, and mark whe
 
 **Version 1.0.0: Phases 1–22 implemented, with manual verification items still open.** Includes personalized mistake review, mastery, statistics, keyboard controls, reduced motion, saved-card recovery and leave-session protection. All 335 tests and production checks pass. Chrome/Chromium and phone/tablet viewport checks are recorded; Safari, Firefox, Edge, screen-reader, true zoom/system-font and slower-device checks remain manual. See [testing](docs/TESTING.md) and the [release checklist](docs/RELEASE.md).
 
+Live app: [Math Practice](https://math-practice-app-pi.vercel.app/).
+
 ## Run locally
 
 Use Node.js 22.12 or later. From the repository root:
