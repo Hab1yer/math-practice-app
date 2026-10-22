@@ -142,7 +142,7 @@ describe('practice session lifecycle', () => {
     { ...config, operations: ['remainder'] },
     { ...config, difficulty: 5 },
     { ...config, sessionLength: 0 },
-    { ...config, mode: 'mistake-review' },
+    { ...config, mode: 'unsupported' },
   ])('rejects invalid configuration %#', (value) => {
     expect(isValidConfiguration(value)).toBe(false);
     expect(() => startPracticeSession(value as PracticeConfiguration)).toThrow(

@@ -1,6 +1,11 @@
 import type { AppSettings } from '../types/settings';
 import type { PracticeSessionState } from '../types/session';
-import { isRecord, isValidHistory, isValidSettings } from './storageValidation';
+import {
+  isRecord,
+  isValidHistory,
+  isValidSettings,
+  isValidActiveSession,
+} from './storageValidation';
 import type { PracticeHistory } from './storageValidation';
 import {
   clearApplicationStorage,
@@ -100,7 +105,10 @@ export function createStorageService(
     );
     const raw: unknown = loaded.data.mistakePatterns;
     const valid = Array.isArray(raw) ? raw.filter(isValidMistakePattern) : [];
-    const patterns = trackMistakes(loaded.data.attempts, valid);
+    const patterns = trackMistakes(
+      loaded.data.attempts,
+      settings.data.masteryThreshold,
+    );
     const byId = new Map(patterns.map((pattern) => [pattern.id, pattern]));
     const damaged =
       raw !== undefined &&
@@ -112,21 +120,29 @@ export function createStorageService(
           return (
             !rebuilt ||
             rebuilt.incorrectCount !== pattern.incorrectCount ||
-            rebuilt.lastIncorrectAt !== pattern.lastIncorrectAt
+            rebuilt.lastIncorrectAt !== pattern.lastIncorrectAt ||
+            rebuilt.similarCorrectCount !== pattern.similarCorrectCount
           );
         }) ||
         new Set(valid.map((pattern) => pattern.id)).size !== valid.length);
+    const data =
+      raw !== undefined || patterns.length
+        ? { ...loaded.data, mistakePatterns: patterns }
+        : loaded.data;
+    const badCheckpoint =
+      data.activeSession !== undefined &&
+      !isValidActiveSession(data.activeSession, data);
+    if (badCheckpoint) delete data.activeSession;
     return {
       ...loaded,
-      data:
-        raw !== undefined || patterns.length
-          ? { ...loaded.data, mistakePatterns: patterns }
-          : loaded.data,
+      data,
       warning:
         loaded.warning ??
         (damaged
           ? 'Some saved mistake patterns were rebuilt from your practice history.'
-          : null),
+          : badCheckpoint
+            ? 'Your unfinished card could not be restored. Saved answers are still here.'
+            : null),
     };
   }
   let history = readHistory();
@@ -153,6 +169,24 @@ export function createStorageService(
     getSettings: () => copy(settings.data),
     getHistory: () => copy(history.data),
     getMistakePatterns: () => copy(history.data.mistakePatterns ?? []),
+    getActiveSession: (): PracticeSessionState | null =>
+      history.data.activeSession
+        ? copy({
+            session: history.data.activeSession.session,
+            currentQuestion: history.data.activeSession.currentQuestion,
+            currentQuestionIndex:
+              history.data.activeSession.currentQuestionIndex,
+            isActive: true,
+            selectedAnswer: history.data.activeSession.selectedAnswer,
+            isCardFlipped: history.data.activeSession.isCardFlipped,
+            attempts: history.data.attempts.filter(
+              (attempt) =>
+                attempt.sessionId === history.data.activeSession!.session.id,
+            ),
+            reviewPatterns: history.data.mistakePatterns ?? [],
+            reviewMasteryThreshold: settings.data.masteryThreshold,
+          })
+        : null,
     getWarning: () =>
       [...new Set([settings.warning, history.warning].filter(Boolean))].join(
         ' ',
@@ -167,9 +201,19 @@ export function createStorageService(
           readOnly: true,
           warning: disk.warning,
         };
-        return;
+      } else {
+        settings = write('settings', { ...settings, data: copy(value) });
       }
-      settings = write('settings', { ...settings, data: copy(value) });
+      history = {
+        ...history,
+        data: {
+          ...history.data,
+          mistakePatterns: trackMistakes(
+            history.data.attempts,
+            value.masteryThreshold,
+          ),
+        },
+      };
     },
     saveSession(state: PracticeSessionState) {
       // Merge the latest disk snapshot so sequential writes from another tab are retained.
@@ -236,11 +280,29 @@ export function createStorageService(
         return;
       }
       // One envelope commits answers and their patterns together, including quota retries.
-      const previous =
-        disk.data.mistakePatterns ?? history.data.mistakePatterns ?? [];
       Object.assign(data, {
-        mistakePatterns: trackMistakes(data.attempts, previous),
+        mistakePatterns: trackMistakes(
+          data.attempts,
+          settings.data.masteryThreshold,
+        ),
       });
+      const latest = sessions.get(state.session.id)!;
+      if (
+        state.isActive &&
+        !latest.completedAt &&
+        latest.attempted === state.session.attempted
+      ) {
+        const checkpoint = copy({
+          session: state.session,
+          currentQuestion: state.currentQuestion,
+          currentQuestionIndex: state.currentQuestionIndex,
+          isActive: true,
+          selectedAnswer: state.selectedAnswer,
+          isCardFlipped: state.isCardFlipped,
+        });
+        if (isValidActiveSession(checkpoint, data))
+          Object.assign(data, { activeSession: checkpoint });
+      }
       history = write('history', { ...history, data });
     },
     resetHistory() {

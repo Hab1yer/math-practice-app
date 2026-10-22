@@ -17,6 +17,9 @@ export default function AppProvider({ children }: { children: ReactNode }) {
   const [storage] = useState(() => createStorageService());
   const [preferences, setPreferences] = useState(() => storage.getSettings());
   const [history, setHistory] = useState(storage.getHistory);
+  const [initialSession, setInitialSession] = useState(
+    storage.getActiveSession,
+  );
   const [sessionGeneration, setSessionGeneration] = useState(0);
   const currentPreferences = useRef(preferences);
   const [storageWarning, setStorageWarning] = useState(storage.getWarning);
@@ -26,6 +29,7 @@ export default function AppProvider({ children }: { children: ReactNode }) {
     currentPreferences.current = next;
     setPreferences(next);
     storage.saveSettings(next);
+    setHistory(storage.getHistory());
     setStorageWarning(storage.getWarning());
     if (
       'defaultOperations' in updates ||
@@ -36,13 +40,22 @@ export default function AppProvider({ children }: { children: ReactNode }) {
   }
   function persistSession(state: PracticeSessionState) {
     storage.saveSession(state);
-    setHistory(storage.getHistory());
+    const previous = history.sessions.find(
+      (session) => session.id === state.session.id,
+    );
+    if (
+      !previous ||
+      previous.attempted !== state.session.attempted ||
+      previous.completedAt !== state.session.completedAt
+    )
+      setHistory(storage.getHistory());
     setStorageWarning(storage.getWarning());
   }
   function resetHistory() {
     const reset = storage.resetHistory();
     setStorageWarning(storage.getWarning());
     if (reset) {
+      setInitialSession(null);
       setHistory(storage.getHistory());
       setSessionGeneration((generation) => generation + 1);
     }
@@ -52,6 +65,7 @@ export default function AppProvider({ children }: { children: ReactNode }) {
     const cleared = storage.clearAllData();
     setStorageWarning(storage.getWarning());
     if (cleared) {
+      setInitialSession(null);
       const defaults = storage.getSettings();
       currentPreferences.current = defaults;
       setPreferences(defaults);
@@ -79,6 +93,11 @@ export default function AppProvider({ children }: { children: ReactNode }) {
             <PracticeSessionProvider
               key={sessionGeneration}
               onPersist={persistSession}
+              initialState={initialSession}
+              getReviewOptions={() => ({
+                patterns: storage.getMistakePatterns(),
+                masteryThreshold: storage.getSettings().masteryThreshold,
+              })}
             >
               {children}
             </PracticeSessionProvider>

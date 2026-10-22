@@ -7,25 +7,27 @@ import App from './App';
 import { createStorageService, STORAGE_KEYS } from '../services/storageService';
 
 afterEach(() => vi.restoreAllMocks());
-function mount(path: string) {
-  return render(
+async function mount(path: string) {
+  const view = render(
     <StrictMode>
       <MemoryRouter initialEntries={[path]}>
         <App />
       </MemoryRouter>
     </StrictMode>,
   );
+  await screen.findByRole('main');
+  return view;
 }
 describe('application persistence', () => {
   it('restores both selected preferences after the entire app remounts', async () => {
     const user = userEvent.setup();
-    const view = mount('/settings');
+    const view = await mount('/settings');
     await user.click(screen.getByRole('checkbox', { name: /Card animations/ }));
     await user.click(
       screen.getByRole('checkbox', { name: /Show explanations/ }),
     );
     view.unmount();
-    mount('/settings');
+    await mount('/settings');
     expect(
       screen.getByRole('checkbox', { name: /Card animations/ }),
     ).not.toBeChecked();
@@ -36,7 +38,7 @@ describe('application persistence', () => {
   });
   it('saves only reports, timestamps ending, and retains history after app restart without resuming the active card', async () => {
     const user = userEvent.setup();
-    const view = mount('/practice/setup');
+    const view = await mount('/practice/setup');
     await user.click(
       screen.getByRole('button', { name: 'Select all operations' }),
     );
@@ -69,7 +71,7 @@ describe('application persistence', () => {
       createStorageService().getHistory().sessions[0].completedAt,
     ).toBeTruthy();
     view.unmount();
-    const recap = mount('/practice/summary');
+    const recap = await mount('/practice/summary');
     expect(
       screen.getByRole('heading', { name: 'Session complete' }),
     ).toBeVisible();
@@ -81,7 +83,7 @@ describe('application persistence', () => {
     expect(screen.getByRole('radio', { name: /5 questions/ })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Division' })).toBeChecked();
     recap.unmount();
-    mount('/practice/session');
+    await mount('/practice/session');
     expect(
       screen.getByRole('heading', { name: 'Choose your practice' }),
     ).toBeVisible();
@@ -95,7 +97,7 @@ describe('application persistence', () => {
     vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new DOMException('Full', 'QuotaExceededError');
     });
-    mount('/practice/setup');
+    await mount('/practice/setup');
     await user.click(screen.getByRole('button', { name: 'Start Session' }));
     expect(
       screen.getByRole('status', { name: 'Saving status' }),
@@ -111,11 +113,11 @@ describe('application persistence', () => {
     ).toHaveTextContent(/out of saving space/);
     expect(localStorage.getItem(STORAGE_KEYS.history)).toBeNull();
   });
-  it('shows a friendly warning and usable settings if the browser denies storage access', () => {
+  it('shows a friendly warning and usable settings if the browser denies storage access', async () => {
     vi.spyOn(window, 'localStorage', 'get').mockImplementation(() => {
       throw new DOMException('Denied', 'SecurityError');
     });
-    mount('/settings');
+    await mount('/settings');
     expect(
       screen.getByRole('status', { name: 'Saving status' }),
     ).toHaveTextContent(/Saving is unavailable/);

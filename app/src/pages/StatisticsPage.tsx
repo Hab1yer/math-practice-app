@@ -11,6 +11,8 @@ import {
   recentSessions,
 } from '../services/statisticsService';
 import { operationOptions, difficultyOptions } from '../utils/practiceOptions';
+import MistakeStatistics from '../components/practice/MistakeStatistics';
+import { useAppPreferences } from '../hooks/useAppPreferences';
 
 const sessionDate = new Intl.DateTimeFormat(undefined, {
   dateStyle: 'medium',
@@ -18,6 +20,7 @@ const sessionDate = new Intl.DateTimeFormat(undefined, {
 });
 export default function StatisticsPage() {
   const history = useContext(PracticeHistoryContext);
+  const { preferences } = useAppPreferences();
   const { resetHistory } = useContext(PracticeHistoryActionsContext);
   const { state } = usePracticeSession();
   const totals = useMemo(
@@ -59,6 +62,10 @@ export default function StatisticsPage() {
             </Link>
           </div>
         )}
+        <MistakeStatistics
+          history={history}
+          threshold={preferences.masteryThreshold}
+        />
         <section
           className="statistics-section"
           aria-labelledby="operation-stats-title"
@@ -137,6 +144,9 @@ export default function StatisticsPage() {
                     </span>
                   </div>
                   <p>
+                    {session.mode === 'mistake-review'
+                      ? 'Mistake review · '
+                      : ''}
                     {operationOptions
                       .filter((option) =>
                         session.operations.includes(option.value),

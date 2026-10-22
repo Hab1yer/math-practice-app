@@ -168,3 +168,44 @@ Screenshot evidence: [zero-attempt mobile summary](verification/phase7-empty-sum
 - Tests cover all required fields, self-report overriding answer equality, exact-fact separation, duplicate attempts, out-of-order timestamps, same-timestamp mastery reset, replay preserving progress, input immutability, arithmetic/difficulty/count/date validation, legacy backfill without startup writes, damaged/duplicate/inconsistent records, quota retry, sequential stale-tab saves, reset/full-clear stale-session protection, future-schema preservation and unavailable storage.
 - Live browser smoke check on local port 5174 verified the disabled review mode's coming-soon explanation and the reset warning explicitly naming saved mistakes. Cancelled using Keep history; existing 6 attempted / 3 correct / 3 incorrect totals remained. No live data was erased or browser storage inspected/modified through scripts.
 - Pattern persistence/recovery is verified automatically; there is no new pattern dashboard to inspect in this phase. Similar question generation, review/mastery advancement, full browser-process restart and hosted verification remain later checks. No new layout or screenshot claim is made.
+
+## Phases 13–16 — implementation pending testing
+
+User requested implementing these four phases together and leaving testing until afterward. No automated tests, browser interactions, contrast measurements, zoom checks or system-font checks were performed for these changes. The previous 273-test result applies only to the committed Phase 12 revision, not this working tree.
+
+Prepared but unexecuted coverage:
+
+- Similar-question tests cover each operation's nearby facts, reversed commutative facts, inverse operations, validity/provenance and recent-expression avoidance with constant randomness.
+- Review tests cover frequency/recency/progress priority, jitter on ties, alternating patterns, eligibility, linked attempts, early mastery completion, duplicate reports, reload persistence, missed inverse questions, reopening and configurable thresholds.
+- Statistics tests cover empty data, operation ties, deterministic fact ordering, separate mastery lists and review totals.
+- Card accessibility tests cover number shortcuts, modifiers/form fields, native Enter/Space, selected state, new-question/reveal focus and changing reduced-motion preferences.
+- StrictMode app tests cover saved-mistake setup, matching-filter blocking, three correct self-reports completing mastery, summary actions, threshold persistence and restored mastered statistics. Updated older assertions for enabled review/configuration, named status regions and ledger-derived progress.
+
+Deferred verification sequence:
+
+1. Run the full automated suite and production build from app/, fix failures and rerun affected checks.
+2. Live browser: generate regular misses in each operation/level, enter matching review, exercise nearby/reversed/inverse questions, verify repeated misses, success/reset/mastery/reopening, early completion and summary counts.
+3. Reload/remount saved review progress, change thresholds, exercise quota/failure recovery and confirm no duplicate advancement. Cancel live clear/reset dialogs; destructive confirmation requires action-time approval.
+4. Check active/mastered statistics, tied missed operations, ranking and empty states against saved attempts.
+5. Perform full keyboard navigation, number-shortcut/form/dialog isolation, reduced-motion changes, screen-reader announcements, measured text/control contrast, 200% browser zoom and larger system fonts. Inspect narrow layouts and capture evidence only after these checks.
+
+No claim of a completed accessibility audit, hosted verification or full browser-process restart is made. Keep these changes local until the deferred verification pass.
+
+## 2026-10-22 — Phases 17–22 release verification
+
+This pass executes the previously deferred tests and supersedes the pending-testing status above.
+
+- Added compact active-card checkpoints, selected/revealed state recovery, a Resume link, native unload confirmation and data-router navigation blocking. Checkpoints share the answer envelope, omit duplicate attempt/pattern arrays and are validated independently so damaged cards cannot erase valid answers.
+- Added friendly render/storage/missing-session errors, finite related-question retries with deterministic valid fallback, opt-out randomized encouragement, narrow-screen polish, privacy information and lazy Statistics/Settings chunks. Reviewed React patterns with the Vercel React best-practices skill.
+- Added seven axe structural checks, recovery/checkpoint/production-router tests, a 5,000-attempt round trip and related-question boundary coverage across all operations and levels. Axe's layout/contrast work is unavailable in jsdom; canvas measurement is explicitly unsupported rather than claimed as verified.
+- The initial parallel run timed out before revealing an outdated summary assertion. Focused runs exposed that assertion, lazy-page queries that needed to await loading, and the changed status of resumed sessions. Corrected those expectations and limited workers to two to reduce host contention.
+- Production-router/live testing found and fixed completion navigation blocked by stale active state, End-and-leave racing a summary redirect, cancellation focus attempted while content was still inert, and native skip-link hashes bypassing router history. Added regressions using the same router API as production. The skip link remains first in the header and all structural axe cases pass.
+- Production preview initially ran inside the sandbox and was unreachable from the browser; the approved external preview runs on port 4174. A Chrome tab retaining an older bundle during local rebuild reached the friendly error boundary when its lazy chunk disappeared. Reloading from Home loads the current build; no practice data was erased.
+- Live Chromium completed five keyboard-operated addition cards (4 right / 1 wrong), restored a saved review card in a fresh document with identical choices, cancelled navigation and restored link focus, then completed three linked correct reviews. Mastery ended the review automatically with no leave warning. Statistics showed 8/7/1/88%, zero active patterns, one mastered pattern and 3/3 review totals. A completed-state reload retained these values.
+- Active reload requests were subject to native beforeunload handling and were not treated as proof of a new document. Fresh-document recovery is proven; full browser-process quit/relaunch remains untested. No live reset/clear was confirmed and no browser storage was read or changed through scripts.
+- Phone/tablet viewports 320×740, 390×844, 768×1024 and 1024×768 had equal client/scroll widths. Inspected phone and portrait-tablet screenshots. Text-contrast sampling on Statistics checked 139 elements, minimum 7.75:1, with no failures. Captured local mastery/mobile evidence; viewport overrides were reset.
+- Independent Chrome privacy/setup navigation and Tab focus passed. Actual Safari, Firefox, Edge, screen-reader, OS motion, system-font, true 200% zoom, physical-device and slower-device testing remain manual. A zoom shortcut did not produce a verifiable change and is not counted as a zoom test.
+- Synthetic 5,000-attempt history preserved every answer and aggregate, used an estimated 2,729,130 UTF-16 bytes, and completed a 74 ms round trip in the recorded run. No archiving was necessary for that workload; no historical data was silently discarded. Capacity failures still preserve the previous saved snapshot and warn.
+- Evidence: [mastery/statistics](verification/release-mastery-desktop.jpg), [mobile review totals](verification/release-statistics-mobile.jpg). Release checklist and browser limitations are in RELEASE.md.
+
+Final release check: 335 tests across 32 files passed, with lint, formatting, TypeScript and production build passing. Main JS: 368.19 kB / 114.55 kB gzip; Settings: 5.34 / 1.80 kB; Statistics: 8.97 / 2.85 kB; CSS: 17.43 / 4.23 kB. The final synthetic-history run measured 78 ms. Chrome's Encouragement setting persisted off after reload and was then restored on.

@@ -3,8 +3,14 @@ import type {
   PracticeSessionState,
 } from '../types/session';
 import { createId } from '../utils/ids';
-import { isDifficultyLevel, isMathOperation } from './difficultyRules';
 import { generateQuestion, generateNextQuestion } from './questionGenerator';
+import { isValidConfiguration } from './practiceConfiguration';
+import { eligibleMistakes, generateReviewQuestion } from './mistakeReview';
+import type { ReviewOptions } from './mistakeReview';
+import { applyMistakeAttempt } from './mistakeTracking';
+import { answerFeedback } from './feedback';
+import { logDevelopmentError } from './developmentLog';
+export { isValidConfiguration } from './practiceConfiguration';
 
 export interface CardSubmission {
   questionId: string;
@@ -12,32 +18,20 @@ export interface CardSubmission {
   selfReportedCorrect: boolean;
 }
 
-export function isValidConfiguration(
-  value: unknown,
-): value is PracticeConfiguration {
-  if (!value || typeof value !== 'object') return false;
-  const config = value as Record<string, unknown>;
-  return (
-    Array.isArray(config.operations) &&
-    config.operations.length > 0 &&
-    [...config.operations].every(isMathOperation) &&
-    isDifficultyLevel(config.difficulty) &&
-    [5, 10, 20, 'continuous'].includes(
-      config.sessionLength as number | string,
-    ) &&
-    config.mode === 'regular'
-  );
-}
-
 export function startPracticeSession(
   configuration: PracticeConfiguration,
+  review?: ReviewOptions,
 ): PracticeSessionState {
   if (!isValidConfiguration(configuration))
-    throw new RangeError('Choose a valid regular practice configuration');
+    throw new RangeError('Choose a valid practice configuration');
+  const reviewing = configuration.mode === 'mistake-review';
+  if (reviewing && !review)
+    throw new RangeError('Choose an active mistake to review');
   const operations = [...new Set(configuration.operations)];
   return {
     session: {
       id: createId(),
+      mode: configuration.mode,
       startedAt: new Date().toISOString(),
       operations,
       difficulty: configuration.difficulty,
@@ -46,10 +40,18 @@ export function startPracticeSession(
       correct: 0,
       incorrect: 0,
     },
-    currentQuestion: generateQuestion(operations, configuration.difficulty),
+    currentQuestion: reviewing
+      ? generateReviewQuestion(review!, configuration)
+      : generateQuestion(operations, configuration.difficulty),
     currentQuestionIndex: 0,
     attempts: [],
     isActive: true,
+    ...(reviewing
+      ? {
+          reviewPatterns: review!.patterns.map((pattern) => ({ ...pattern })),
+          reviewMasteryThreshold: review!.masteryThreshold,
+        }
+      : {}),
   };
 }
 
@@ -68,6 +70,7 @@ export function endPracticeSession(
 export function recordPracticeResult(
   state: PracticeSessionState,
   submission: CardSubmission,
+  review?: ReviewOptions,
 ): PracticeSessionState {
   const question = state.currentQuestion;
   if (
@@ -96,6 +99,9 @@ export function recordPracticeResult(
     selfReportedCorrect: submission.selfReportedCorrect,
     difficulty: question.difficulty,
     source: question.source,
+    ...(question.mistakePatternId
+      ? { mistakePatternId: question.mistakePatternId }
+      : {}),
     attemptedAt: new Date().toISOString(),
   };
   const session = {
@@ -105,12 +111,37 @@ export function recordPracticeResult(
     incorrect:
       state.session.incorrect + (submission.selfReportedCorrect ? 0 : 1),
   };
-  const updated = {
+  const updated: PracticeSessionState = {
     ...state,
     session,
     attempts: [...state.attempts, attempt],
     currentQuestionIndex: state.currentQuestionIndex + 1,
+    selectedAnswer: undefined,
+    isCardFlipped: false,
+    feedback: answerFeedback(submission.selfReportedCorrect),
   };
+  const reviewing = session.mode === 'mistake-review';
+  const threshold =
+    review?.masteryThreshold ?? state.reviewMasteryThreshold ?? 3;
+  const reviewOptions = reviewing
+    ? {
+        patterns: applyMistakeAttempt(
+          review?.patterns ?? state.reviewPatterns ?? [],
+          attempt,
+          threshold,
+        ),
+        masteryThreshold: threshold,
+      }
+    : undefined;
+  if (reviewOptions) {
+    updated.reviewPatterns = reviewOptions.patterns;
+    updated.reviewMasteryThreshold = threshold;
+    if (!eligibleMistakes(reviewOptions.patterns, session).length)
+      return endPracticeSession({
+        ...updated,
+        session: { ...session, completionReason: 'mastered' },
+      });
+  }
   if (
     session.sessionLength !== 'continuous' &&
     session.attempted >= session.sessionLength
@@ -119,13 +150,16 @@ export function recordPracticeResult(
   try {
     return {
       ...updated,
-      currentQuestion: generateNextQuestion(
-        session.operations,
-        session.difficulty,
-        question,
-      ),
+      currentQuestion: reviewOptions
+        ? generateReviewQuestion(reviewOptions, session, updated.attempts)
+        : generateNextQuestion(
+            session.operations,
+            session.difficulty,
+            question,
+          ),
     };
-  } catch {
+  } catch (error) {
+    logDevelopmentError('Could not prepare the next question', error);
     return { ...updated, currentQuestion: null };
   }
 }

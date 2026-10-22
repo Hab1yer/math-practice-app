@@ -238,3 +238,26 @@ User prompt: “proceed”, continuing the next named phase.
 - Added 27 service cases and extended the StrictMode app flow for duplicate reporting, ending and reload persistence. The focused run passed 65 tests; full check passed 273 tests across 22 files, lint, formatting, TypeScript and production build (308.41 kB JS / 95.30 kB gzip; CSS unchanged).
 - Live local-browser smoke check verified both copy changes and cancelled reset, preserving the existing 6/3/3 totals. Pattern data behavior was tested automatically without browser storage scripts or live deletion. No hosted deployment, full browser-process restart or new responsive-layout verification is claimed.
 - Updated maintained docs and marked only Phase 12's 17 tasks complete. Phase 13 is next; Phase 9's browser-process restart check remains pending.
+
+## 2026-10-22 — Phases 13–16 implementation; testing deferred
+
+User prompt: “Can we continue phases 13-16 please and leave the testing after”. Applied the frontend-design skill, retained the existing green/cream/yellow style and used native controls and concise copy.
+
+- Phase 13: added finite nearby/reversed/inverse candidate pools, complete arithmetic/difficulty validation, selected-operation filtering, recent-expression avoidance, shuffled choices and original-pattern provenance.
+- Phase 14: enabled matching review in setup and summary, added active counts and filter explanations, frequency/recency/progress ranking with tie jitter and pattern alternation, linked review attempts, early completion on mastery and a saved configurable threshold. Replay from unique ordered attempts now derives review progress and reopening, with missed review questions updating the original pattern. Stored mode/provenance/completion metadata are additive; older regular history remains supported.
+- Phase 15: added review totals, active/mastered counts, all tied most-missed operations, ordered fact details with dates/counts/progress and a separate mastered disclosure.
+- Phase 16: added 1–4 shortcuts that exclude editable controls, modifiers, held/composition keys, dialogs and inert content; visible shortcut hints; named selection/progress statuses; question/reveal focus with position descriptions; live reduced-motion subscription; relative text sizes, darker control borders, wrapping and forced-color selected outlines. Preserved question focus instead of allowing the page heading to replace it.
+- Prepared new service, StrictMode application and accessibility tests and updated existing expectations for the implemented behavior. Did not execute the automated suite or browser tests, honoring the requested order. TypeScript caught an unsupported exact option in a test query; removed it. Final TypeScript and lint checks passed. Formatting was applied; behavioral testing and the production build remain deferred.
+- Updated implementation/status docs and checklist. Prioritization execution, full keyboard traversal, contrast measurement, 200% zoom and larger-font checks remain unchecked. Phase 9's full browser restart and hosted checks remain pending. No phase 17 work or deployment is claimed; changes remain local pending the deferred testing pass.
+
+## 2026-10-22 — Phases 17–22: first release preparation
+
+User prompt: “Please proceed with the rest of the phases”. Continued from the uncommitted Phases 13–16 implementation and included the deferred testing.
+
+- Implemented recovery, navigation safety, supportive feedback, responsive polish, render/error recovery, related-question fallback, privacy information, code splitting and large-history measurement. Version is 1.0.0. No backend, account system, data submission, analytics, advertising or external fonts were added.
+- Applied the React best-practices, verification and Vercel deployment skills. The user story runs from setup/card input through the localStorage ledger to review/mastery/statistics; there is no API/data-service boundary. Verified the intended Vercel team CSE4095, project math-practice-app and existing main-branch Git integration before release work.
+- Added axe-core as a development-only dependency. Restricted-registry installation failed, then the approved normal-registry retry succeeded. Prepared precise manual browser/accessibility limitations instead of checking unavailable tasks as complete.
+- Tests and live production-preview work exposed/fixed completion/navigation races, cancellation focus timing, router-aware skip navigation and asynchronous lazy-page test queries. Kept destructive clear/reset behavior in automated tests; did not erase live browser data.
+- Current implementation and verification details are in IMPLEMENTATION.md, TESTING.md and RELEASE.md. The original specification remains unchanged. Unavailable browser, screen-reader, zoom/font, slow-device and full-process-restart checks remain open.
+
+- Final pre-release check passed all 335 tests in 32 files, lint, formatting, TypeScript and the production build. Author identity remains repository-local Hab1yer. Chrome preference persistence was verified and restored to defaults.

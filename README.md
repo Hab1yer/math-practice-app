@@ -4,7 +4,7 @@ A React + TypeScript arithmetic practice app for children ages 7–12, built as 
 
 Choose operations and difficulty, answer a question, flip the card, and mark whether you got it right. Complete a fixed session or practice continuously, then see your totals and accuracy.
 
-**Progress: Phases 1–12 implemented.** Practice history, mistake patterns, statistics, sound/card preferences and practice defaults save in this browser. Reset Statistics clears history and saved mistakes while keeping settings; Clear All Application Data requires confirmation and restores defaults. A full browser quit/relaunch persistence check remains pending. Similar question generation is next (Phase 13); review mode and active-card recovery follow later. This is a work in progress.
+**Version 1.0.0: Phases 1–22 implemented, with manual verification items still open.** Includes personalized mistake review, mastery, statistics, keyboard controls, reduced motion, saved-card recovery and leave-session protection. All 335 tests and production checks pass. Chrome/Chromium and phone/tablet viewport checks are recorded; Safari, Firefox, Edge, screen-reader, true zoom/system-font and slower-device checks remain manual. See [testing](docs/TESTING.md) and the [release checklist](docs/RELEASE.md).
 
 ## Run locally
 

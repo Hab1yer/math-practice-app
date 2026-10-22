@@ -9,7 +9,7 @@
   --paper: #fffef8;
   --mint: #c9e4d8;
   --sun: #f6cd57;
-  --line: #c8d3c7;
+  --line: #75877b;
 }
 
 * {
@@ -17,7 +17,7 @@
 }
 body {
   margin: 0;
-  min-width: 280px;
+  min-width: 0;
 }
 a {
   color: inherit;
@@ -41,7 +41,7 @@ a {
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  font-size: 23px;
+  font-size: 1.4375rem;
   font-weight: bold;
   letter-spacing: -0.05em;
   white-space: nowrap;
@@ -55,7 +55,7 @@ a {
   border: 1.5px solid var(--ink);
   background: var(--sun);
   transform: rotate(-6deg);
-  font-size: 29px;
+  font-size: 1.8125rem;
 }
 .navigation {
   display: flex;
@@ -66,7 +66,7 @@ a {
   padding: 12px 15px;
   text-decoration: none;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
   min-height: 44px;
 }
@@ -86,7 +86,7 @@ a {
   margin: 22px 0 30px;
 }
 .eyebrow {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: bold;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -95,7 +95,7 @@ a {
 }
 h1 {
   max-width: 760px;
-  font-size: clamp(40px, 5.8vw, 68px);
+  font-size: clamp(2.5rem, 5.8vw, 4.25rem);
   line-height: 1.08;
   letter-spacing: -0.055em;
   margin: 18px 0 32px;
@@ -111,7 +111,7 @@ main:focus {
   align-items: start;
 }
 .intro {
-  font-size: 21px;
+  font-size: 1.3125rem;
   line-height: 1.6;
   margin: 0;
 }
@@ -128,7 +128,7 @@ main:focus {
   border: 1.5px solid var(--ink);
   border-radius: 14px;
   background: var(--sun);
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: bold;
   transform: rotate(-6deg);
 }
@@ -137,7 +137,7 @@ main:focus {
   transform: rotate(6deg);
 }
 .encouragement {
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.65;
   max-width: 275px;
   margin: 0;
@@ -171,7 +171,7 @@ main:focus {
   background: #fbd878;
 }
 .action-number {
-  font-size: 13px;
+  font-size: 0.8125rem;
   flex-shrink: 0;
   font-weight: bold;
   border-right: 1px solid currentColor;
@@ -179,17 +179,17 @@ main:focus {
 }
 .action-card strong {
   display: block;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 .action-card small {
   display: block;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.5;
   margin-top: 6px;
 }
 .action-arrow {
   margin-left: auto;
-  font-size: 25px;
+  font-size: 1.5625rem;
 }
 .button-link {
   display: inline-flex;
@@ -201,7 +201,7 @@ main:focus {
   border-radius: 12px;
   background: var(--sun);
   font-weight: bold;
-  font-size: 18px;
+  font-size: 1.125rem;
   text-decoration: none;
   margin-top: 28px;
 }
@@ -218,7 +218,7 @@ main:focus {
   background: var(--mint);
   padding: 7px 12px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: bold;
   margin-bottom: 22px;
 }
@@ -226,7 +226,7 @@ main:focus {
   max-width: 620px;
 }
 .coming-soon > p:not(.intro) {
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.7;
   margin: 16px 0 0;
 }
@@ -237,7 +237,7 @@ main:focus {
   flex-wrap: wrap;
   gap: 14px;
   padding: 24px 0;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 :focus-visible {
   outline: 3px solid var(--ink);
@@ -266,7 +266,7 @@ main:focus {
   min-width: 0;
 }
 .setup-section legend {
-  font-size: 22px;
+  font-size: 1.375rem;
   font-weight: bold;
   margin-bottom: 18px;
   padding: 0;
@@ -281,7 +281,7 @@ main:focus {
 }
 .section-intro p {
   margin: 0;
-  font-size: 17px;
+  font-size: 1.0625rem;
   line-height: 1.6;
 }
 .text-button {
@@ -337,13 +337,13 @@ main:focus {
 }
 .choice-label {
   display: block;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
   line-height: 1.3;
 }
 .choice-description {
   display: block;
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.55;
   color: #4b6157;
   margin-top: 7px;
@@ -355,10 +355,10 @@ main:focus {
 }
 .operation-grid .choice-label {
   grid-column: 1 / -1;
-  font-size: 17px;
+  font-size: 1.0625rem;
 }
 .operation-symbol {
-  font-size: 30px;
+  font-size: 1.875rem;
   line-height: 22px;
   text-align: right;
 }
@@ -370,14 +370,14 @@ main:focus {
   color: #58665f;
 }
 .field-hint {
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.65;
   margin: 16px 0 0;
 }
 .validation-message {
   color: #994222;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.6;
   margin: 14px 0 0;
 }
@@ -427,7 +427,7 @@ button.button-link:disabled {
   gap: 16px;
   padding: 18px 0;
   border-bottom: 1px solid var(--line);
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.5;
 }
 .configuration-summary dt {
@@ -471,10 +471,10 @@ button.button-link:disabled {
     padding: 14px 12px;
   }
   .operation-grid .choice-label {
-    font-size: 15px;
+    font-size: 0.9375rem;
   }
   .setup-section legend {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
   .configuration-summary > div {
     grid-template-columns: 1fr;
@@ -491,7 +491,7 @@ button.button-link:disabled {
   }
   .navigation a {
     padding: 12px 10px;
-    font-size: 15px;
+    font-size: 0.9375rem;
   }
   .page {
     padding: 28px 22px;
@@ -499,20 +499,20 @@ button.button-link:disabled {
     box-shadow: 5px 5px 0 #dedfc9;
   }
   .intro {
-    font-size: 19px;
+    font-size: 1.1875rem;
   }
   .action-card {
     gap: 12px;
     padding: 20px 14px;
   }
   .action-card strong {
-    font-size: 19px;
+    font-size: 1.1875rem;
   }
   .action-number {
     padding-right: 10px;
   }
   .site-footer {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 }
 @media (max-width: 360px) {
@@ -545,7 +545,7 @@ button.button-link:disabled {
 }
 .card-progress {
   margin: 0 0 22px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: bold;
   border-bottom: 1px solid var(--line);
   padding-bottom: 18px;
@@ -580,7 +580,7 @@ button.button-link:disabled {
 }
 .math-problem {
   text-align: center;
-  font-size: clamp(30px, 5vw, 60px);
+  font-size: clamp(1.875rem, 5vw, 3.75rem);
   line-height: 1.35;
   letter-spacing: -0.04em;
   margin: 32px 0;
@@ -593,7 +593,7 @@ button.button-link:disabled {
 }
 .answer-choice {
   font-family: inherit;
-  font-size: 26px;
+  font-size: 1.625rem;
   font-weight: bold;
   color: var(--ink);
   border: 2px solid var(--line);
@@ -613,7 +613,7 @@ button.button-link:disabled {
 }
 .answer-choice small {
   display: block;
-  font-size: 12px;
+  font-size: 0.75rem;
   margin-top: 6px;
 }
 .answer-choice:active {
@@ -632,14 +632,14 @@ button.button-link:disabled {
 }
 .selected-answer {
   text-align: center;
-  font-size: 22px;
+  font-size: 1.375rem;
   margin: 18px 0;
 }
 .answer-explanation {
   background: var(--mint);
   border-radius: 12px;
   padding: 18px;
-  font-size: 19px;
+  font-size: 1.1875rem;
   line-height: 1.65;
   margin: 24px 0;
 }
@@ -657,7 +657,7 @@ button.button-link:disabled {
   background: var(--paper);
 }
 .card-result {
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
   font-weight: bold;
   margin: 24px 0 0;
@@ -672,7 +672,7 @@ button.button-link:disabled {
 }
 .preview-next {
   padding: 18px 0;
-  font-size: 17px;
+  font-size: 1.0625rem;
   line-height: 1.6;
 }
 .preview-next .button-link {
@@ -687,7 +687,7 @@ button.button-link:disabled {
   margin-top: 30px;
 }
 .settings-section h2 {
-  font-size: 26px;
+  font-size: 1.625rem;
   margin: 0 0 14px;
 }
 .settings-section .preferences {
@@ -700,7 +700,7 @@ button.button-link:disabled {
   min-width: 0;
 }
 .settings-operations legend {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
   margin-bottom: 14px;
 }
@@ -712,7 +712,7 @@ button.button-link:disabled {
 .settings-selects label {
   display: grid;
   gap: 10px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
 }
 .settings-selects select {
@@ -720,7 +720,7 @@ button.button-link:disabled {
   min-height: 52px;
   padding: 12px;
   font: inherit;
-  font-size: 17px;
+  font-size: 1.0625rem;
   color: var(--ink);
   background: var(--paper);
   border: 1px solid var(--ink);
@@ -738,7 +738,7 @@ button.button-link:disabled {
 }
 
 .session-context {
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.6;
   font-weight: bold;
   margin: 20px 0 0;
@@ -756,16 +756,16 @@ button.button-link:disabled {
   text-align: center;
 }
 .session-totals dt {
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 .session-totals dd {
   margin: 10px 0 0;
-  font-size: 30px;
+  font-size: 1.875rem;
   font-weight: bold;
 }
 .session-progress label {
   display: block;
-  font-size: 16px;
+  font-size: 1rem;
   margin-bottom: 10px;
 }
 .summary-accuracy {
@@ -789,10 +789,10 @@ button.button-link:disabled {
   margin: 18px 0 0;
 }
 .statistics-totals dt {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .statistics-totals dd {
-  font-size: 22px;
+  font-size: 1.375rem;
   font-weight: bold;
   margin: 8px 0 0;
 }
@@ -805,7 +805,7 @@ button.button-link:disabled {
   border-radius: 16px;
 }
 .statistics-overview dd {
-  font-size: clamp(32px, 5vw, 48px);
+  font-size: clamp(2rem, 5vw, 3rem);
 }
 .statistics-overview .statistics-accuracy {
   background: var(--sun);
@@ -816,7 +816,7 @@ button.button-link:disabled {
   margin-top: 38px;
 }
 .statistics-section h2 {
-  font-size: 26px;
+  font-size: 1.625rem;
   margin: 0 0 16px;
 }
 .statistics-grid {
@@ -830,7 +830,7 @@ button.button-link:disabled {
   border-radius: 18px;
 }
 .statistics-card h3 {
-  font-size: 20px;
+  font-size: 1.25rem;
   margin: 0;
   display: flex;
   align-items: center;
@@ -844,11 +844,11 @@ button.button-link:disabled {
   height: 34px;
   display: inline-grid;
   place-items: center;
-  font-size: 24px;
+  font-size: 1.5rem;
 }
 .statistics-level,
 .session-status {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: normal;
 }
 .statistics-level {
@@ -886,7 +886,7 @@ button.button-link:disabled {
   border-radius: 8px;
 }
 .recent-session p {
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.6;
   margin-bottom: 0;
 }
@@ -915,20 +915,20 @@ button.button-link:disabled {
     gap: 8px;
   }
   .statistics-totals dt {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .statistics-totals dd {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
   .statistics-overview dd {
-    font-size: 36px;
+    font-size: 2.25rem;
   }
 }
 .summary-accuracy p {
   margin: 0;
 }
 .summary-accuracy .accuracy-value {
-  font-size: clamp(54px, 10vw, 80px);
+  font-size: clamp(3.375rem, 10vw, 5rem);
   font-weight: bold;
   line-height: 1.2;
   margin: 8px 0;
@@ -993,10 +993,10 @@ button.button-link:disabled {
   padding: 30px;
 }
 .confirm-dialog h2 {
-  font-size: 28px;
+  font-size: 1.75rem;
 }
 .confirm-dialog p {
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.65;
 }
 @media (max-width: 480px) {
@@ -1007,7 +1007,7 @@ button.button-link:disabled {
     padding: 14px 6px;
   }
   .session-totals dt {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 }
 @media (max-width: 540px) {
@@ -1018,10 +1018,171 @@ button.button-link:disabled {
     grid-template-columns: 1fr;
   }
   .answer-explanation {
-    font-size: 17px;
+    font-size: 1.0625rem;
     padding: 14px;
   }
   .answer-choice {
     min-height: 78px;
+  }
+}
+
+/* Text, keyboard controls and review details scale with the browser's font size. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.keyboard-hint {
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin: 10px 0 0;
+}
+.answer-choice {
+  position: relative;
+  padding-inline: 2rem;
+}
+.answer-choice .answer-key {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-start: 10px;
+  margin: 0;
+  font-size: 0.75rem;
+}
+.mistake-statistics h3 {
+  font-size: 1.25rem;
+  margin: 28px 0 0;
+}
+.mistake-list {
+  display: grid;
+  gap: 14px;
+  padding: 0;
+  list-style: none;
+}
+.mistake-pattern {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #f9f8ef;
+}
+.mistake-fact {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.mistake-fact h4 {
+  font-size: 1.5rem;
+  margin: 0;
+}
+.mistake-fact > span,
+.mistake-pattern > p {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+.mastery-progress label {
+  display: block;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+.mastery-progress progress {
+  width: 100%;
+  height: 14px;
+  accent-color: var(--ink);
+}
+.mastered-patterns {
+  margin-top: 22px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.mastered-patterns summary {
+  padding: 12px 4px;
+  min-height: 44px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.125rem;
+}
+.review-complete {
+  background: var(--mint);
+  padding: 18px;
+  border: 1px solid var(--ink);
+  border-radius: 12px;
+  line-height: 1.6;
+}
+.page,
+.choice-option > span,
+.statistics-totals > div,
+.session-totals > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.statistics-totals:not(.statistics-overview) {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 5rem), 1fr));
+}
+@media (forced-colors: active) {
+  .answer-choice[aria-pressed='true'],
+  .choice-option:has(input:checked) {
+    outline: 3px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
+/* Practice remains usable at narrow widths and with enlarged text. */
+.practice-session {
+  max-width: 760px;
+  margin-inline: auto;
+}
+.practice-feedback,
+.resume-notice {
+  padding: 16px 18px;
+  border: 1px solid var(--ink);
+  border-radius: 12px;
+  background: var(--mint);
+  line-height: 1.65;
+}
+.resume-notice a {
+  display: inline-block;
+  min-height: 44px;
+  padding-block: 10px;
+  font-weight: bold;
+}
+.privacy-copy {
+  max-width: 70ch;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+.site-footer a {
+  min-height: 44px;
+  padding-block: 10px;
+}
+.navigation {
+  flex-wrap: wrap;
+}
+.mistake-pattern {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
+}
+@media (max-width: 400px) {
+  .answer-grid {
+    grid-template-columns: 1fr;
+  }
+  .session-totals {
+    grid-template-columns: 1fr;
+  }
+  .statistics-overview {
+    grid-template-columns: 1fr;
+  }
+  .page {
+    padding: 24px 16px;
+  }
+  .confirm-dialog {
+    padding: 20px 16px;
   }
 }

@@ -5,19 +5,21 @@ interface PageContainerProps {
   title: string;
   eyebrow?: string;
   children: ReactNode;
+  focusHeading?: boolean;
 }
 
 export default function PageContainer({
   title,
   eyebrow,
   children,
+  focusHeading = true,
 }: PageContainerProps) {
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     document.title = `${title} | Math Practice`;
-    headingRef.current?.focus();
-  }, [title]);
+    if (focusHeading) headingRef.current?.focus();
+  }, [title, focusHeading]);
 
   return (
     <main

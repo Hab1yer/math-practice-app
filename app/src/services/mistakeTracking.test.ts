@@ -85,12 +85,21 @@ describe('mistake patterns', () => {
     ).toHaveLength(5);
   });
   it('preserves progress on a replay but resets it on another miss at the same timestamp', () => {
-    const previous = [
-      { ...trackMistakes([miss()])[0], similarCorrectCount: 3, mastered: true },
-    ];
-    expect(trackMistakes([miss()], previous)).toEqual(previous);
+    const reviews = [1, 2, 3].map((index) =>
+      miss({
+        id: `review-${index}`,
+        questionId: `review-${index}`,
+        source: 'mistake-review',
+        mistakePatternId: trackMistakes([miss()])[0].id,
+        selfReportedCorrect: true,
+      }),
+    );
+    const ledger = [miss(), ...reviews];
+    const previous = trackMistakes(ledger);
+    expect(previous[0].mastered).toBe(true);
+    expect(trackMistakes([...ledger, ...reviews])).toEqual(previous);
     expect(
-      trackMistakes([miss(), miss({ id: 'b', questionId: 'b' })], previous)[0],
+      trackMistakes([...ledger, miss({ id: 'b', questionId: 'b' })])[0],
     ).toMatchObject({
       incorrectCount: 2,
       similarCorrectCount: 0,

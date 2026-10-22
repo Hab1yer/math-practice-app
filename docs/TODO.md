@@ -546,37 +546,39 @@ Initial routes:
 
 ## Phase 13: Similar Question Generation
 
+Implementation is complete through Phase 22. The release pass executes the deferred tests; unavailable manual browser/accessibility/device checks remain unchecked. See RELEASE.md for exact evidence and limitations.
+
 ### 54. Generate Nearby-Number Questions
 
-- [ ] Create similar questions using nearby operands.
-- [ ] Keep questions within the same difficulty range.
-- [ ] Avoid invalid subtraction questions.
-- [ ] Avoid invalid division questions.
-- [ ] Avoid generating the exact same question too frequently.
+- [x] Create similar questions using nearby operands.
+- [x] Keep questions within the same difficulty range.
+- [x] Avoid invalid subtraction questions.
+- [x] Avoid invalid division questions.
+- [x] Avoid generating the exact same question too frequently.
 
 ### 55. Generate Reversed-Operand Questions
 
-- [ ] Reverse addition operands.
-- [ ] Reverse multiplication operands.
-- [ ] Avoid treating reversed subtraction as equivalent.
-- [ ] Avoid treating reversed division as equivalent.
+- [x] Reverse addition operands.
+- [x] Reverse multiplication operands.
+- [x] Avoid treating reversed subtraction as equivalent.
+- [x] Avoid treating reversed division as equivalent.
 
 ### 56. Generate Fact-Family Questions
 
-- [ ] Generate multiplication questions from division mistakes.
-- [ ] Generate division questions from multiplication mistakes.
-- [ ] Generate subtraction questions from addition mistakes.
-- [ ] Generate addition questions from subtraction mistakes.
-- [ ] Ensure generated questions match the selected difficulty.
+- [x] Generate multiplication questions from division mistakes.
+- [x] Generate division questions from multiplication mistakes.
+- [x] Generate subtraction questions from addition mistakes.
+- [x] Generate addition questions from subtraction mistakes.
+- [x] Ensure generated questions match the selected difficulty.
 
 ### 57. Create the Similar Question Generator Service
 
-- [ ] Accept a mistake pattern.
-- [ ] Select an appropriate similarity strategy.
-- [ ] Generate a valid related question.
-- [ ] Label the question as `mistake-review`.
-- [ ] Attach the related mistake-pattern ID.
-- [ ] Add unit tests for every operation.
+- [x] Accept a mistake pattern.
+- [x] Select an appropriate similarity strategy.
+- [x] Generate a valid related question.
+- [x] Label the question as `mistake-review`.
+- [x] Attach the related mistake-pattern ID.
+- [x] Add unit tests for every operation.
 
 ---
 
@@ -584,42 +586,42 @@ Initial routes:
 
 ### 58. Add Review Mode to Practice Setup
 
-- [ ] Add a regular-practice option.
-- [ ] Add a mistake-review option.
-- [ ] Disable mistake review when no active mistakes exist.
-- [ ] Explain why the option is disabled.
-- [ ] Display the number of active mistake patterns.
+- [x] Add a regular-practice option.
+- [x] Add a mistake-review option.
+- [x] Disable mistake review when no active mistakes exist.
+- [x] Explain why the option is disabled.
+- [x] Display the number of active mistake patterns.
 
 ### 59. Prioritize Mistake Patterns
 
-- [ ] Give higher priority to frequently missed patterns.
-- [ ] Give higher priority to recently missed patterns.
-- [ ] Give higher priority to patterns with little successful review.
-- [ ] Randomize patterns with similar priority.
-- [ ] Test the prioritization logic.
+- [x] Give higher priority to frequently missed patterns.
+- [x] Give higher priority to recently missed patterns.
+- [x] Give higher priority to patterns with little successful review.
+- [x] Randomize patterns with similar priority.
+- [x] Test the prioritization logic.
 
 ### 60. Build Mistake Review Sessions
 
-- [ ] Select active mistake patterns.
-- [ ] Generate similar questions from those patterns.
-- [ ] Mix multiple mistake patterns in one session.
-- [ ] Record which pattern produced each question.
-- [ ] Display mistake-review counts in the session summary.
+- [x] Select active mistake patterns.
+- [x] Generate similar questions from those patterns.
+- [x] Mix multiple mistake patterns in one session.
+- [x] Record which pattern produced each question.
+- [x] Display mistake-review counts in the session summary.
 
 ### 61. Track Similar-Question Success
 
-- [ ] Increment similar-correct count after a correct review answer.
-- [ ] Handle incorrect review answers.
-- [ ] Update the original mistake pattern.
-- [ ] Store the updated pattern locally.
+- [x] Increment similar-correct count after a correct review answer.
+- [x] Handle incorrect review answers.
+- [x] Update the original mistake pattern.
+- [x] Store the updated pattern locally.
 
 ### 62. Implement Mastery Rules
 
-- [ ] Mark a pattern as mastered after three correct similar questions.
-- [ ] Make the mastery threshold configurable.
-- [ ] Exclude mastered patterns from normal review.
-- [ ] Allow mastered patterns to return after a future mistake.
-- [ ] Add tests for mastery transitions.
+- [x] Mark a pattern as mastered after three correct similar questions.
+- [x] Make the mastery threshold configurable.
+- [x] Exclude mastered patterns from normal review.
+- [x] Allow mastered patterns to return after a future mistake.
+- [x] Add tests for mastery transitions.
 
 ---
 
@@ -627,26 +629,26 @@ Initial routes:
 
 ### 63. Add Mistake Statistics
 
-- [ ] Display the number of active mistake patterns.
-- [ ] Display the number of mastered patterns.
-- [ ] Display the number of similar questions practiced.
-- [ ] Display the number of review questions answered correctly.
+- [x] Display the number of active mistake patterns.
+- [x] Display the number of mastered patterns.
+- [x] Display the number of similar questions practiced.
+- [x] Display the number of review questions answered correctly.
 
 ### 64. Identify Frequently Missed Areas
 
-- [ ] Identify the most frequently missed operation.
-- [ ] Identify frequently missed number facts.
-- [ ] Sort mistake patterns by incorrect count.
-- [ ] Handle ties.
-- [ ] Add an empty state when there are no mistakes.
+- [x] Identify the most frequently missed operation.
+- [x] Identify frequently missed number facts.
+- [x] Sort mistake patterns by incorrect count.
+- [x] Handle ties.
+- [x] Add an empty state when there are no mistakes.
 
 ### 65. Add Mistake Details
 
-- [ ] Display active mistake patterns.
-- [ ] Show incorrect counts.
-- [ ] Show mastery progress.
-- [ ] Show the most recent incorrect date.
-- [ ] Allow mastered patterns to be viewed separately.
+- [x] Display active mistake patterns.
+- [x] Show incorrect counts.
+- [x] Show mastery progress.
+- [x] Show the most recent incorrect date.
+- [x] Allow mastered patterns to be viewed separately.
 
 ---
 
@@ -654,33 +656,33 @@ Initial routes:
 
 ### 66. Improve Keyboard Navigation
 
-- [ ] Ensure every control is reachable with Tab.
-- [ ] Add visible focus indicators.
-- [ ] Support Enter and Space on buttons.
-- [ ] Support number keys 1–4 for answer selection.
-- [ ] Prevent keyboard shortcuts from interfering with form inputs.
+- [x] Ensure every control is reachable with Tab.
+- [x] Add visible focus indicators.
+- [x] Support Enter and Space on buttons.
+- [x] Support number keys 1–4 for answer selection.
+- [x] Prevent keyboard shortcuts from interfering with form inputs.
 
 ### 67. Improve Screen-Reader Support
 
-- [ ] Use semantic HTML.
-- [ ] Add accessible labels to answer choices.
-- [ ] Announce question changes.
-- [ ] Announce the revealed correct answer.
-- [ ] Announce session progress.
-- [ ] Add accessible names to icon buttons.
+- [x] Use semantic HTML.
+- [x] Add accessible labels to answer choices.
+- [x] Announce question changes.
+- [x] Announce the revealed correct answer.
+- [x] Announce session progress.
+- [x] Add accessible names to icon buttons.
 
 ### 68. Support Reduced Motion
 
-- [ ] Detect `prefers-reduced-motion`.
-- [ ] Disable card animations when reduced motion is requested.
-- [ ] Ensure card content still changes clearly.
-- [ ] Respect the application's animation setting.
+- [x] Detect `prefers-reduced-motion`.
+- [x] Disable card animations when reduced motion is requested.
+- [x] Ensure card content still changes clearly.
+- [x] Respect the application's animation setting.
 
 ### 69. Check Visual Accessibility
 
-- [ ] Verify sufficient color contrast.
-- [ ] Avoid communicating results by color alone.
-- [ ] Add text or icons to selected states.
+- [x] Verify sufficient color contrast.
+- [x] Avoid communicating results by color alone.
+- [x] Add text or icons to selected states.
 - [ ] Test at 200% browser zoom.
 - [ ] Test with larger system font sizes.
 
@@ -690,33 +692,33 @@ Initial routes:
 
 ### 70. Optimize for Tablets
 
-- [ ] Use large touch targets.
-- [ ] Center the practice card.
-- [ ] Keep answer choices easy to reach.
-- [ ] Test portrait and landscape orientations.
+- [x] Use large touch targets.
+- [x] Center the practice card.
+- [x] Keep answer choices easy to reach.
+- [x] Test portrait and landscape orientations.
 
 ### 71. Optimize for Mobile Devices
 
-- [ ] Stack answer choices when necessary.
-- [ ] Adjust card width.
-- [ ] Prevent horizontal scrolling.
-- [ ] Simplify navigation.
-- [ ] Test on common small-screen sizes.
+- [x] Stack answer choices when necessary.
+- [x] Adjust card width.
+- [x] Prevent horizontal scrolling.
+- [x] Simplify navigation.
+- [x] Test on common small-screen sizes.
 
 ### 72. Optimize the Statistics Layout
 
-- [ ] Convert wide tables to cards on small screens.
-- [ ] Prevent labels and values from overlapping.
-- [ ] Keep recent sessions readable.
-- [ ] Support horizontal scrolling only when necessary.
+- [x] Convert wide tables to cards on small screens.
+- [x] Prevent labels and values from overlapping.
+- [x] Keep recent sessions readable.
+- [x] Support horizontal scrolling only when necessary.
 
 ### 73. Add Child-Friendly Feedback
 
-- [ ] Add positive feedback messages.
-- [ ] Add supportive messages after mistakes.
-- [ ] Avoid shaming language.
-- [ ] Randomize feedback without becoming distracting.
-- [ ] Add an option to disable feedback effects.
+- [x] Add positive feedback messages.
+- [x] Add supportive messages after mistakes.
+- [x] Avoid shaming language.
+- [x] Randomize feedback without becoming distracting.
+- [x] Add an option to disable feedback effects.
 
 ---
 
@@ -724,19 +726,19 @@ Initial routes:
 
 ### 74. Persist an Active Session
 
-- [ ] Save the active session.
-- [ ] Save the current question.
-- [ ] Save the selected answer when appropriate.
-- [ ] Restore the session after a page refresh.
-- [ ] Clear restored state when the session ends.
+- [x] Save the active session.
+- [x] Save the current question.
+- [x] Save the selected answer when appropriate.
+- [x] Restore the session after a page refresh.
+- [x] Clear restored state when the session ends.
 
 ### 75. Protect Against Accidental Navigation
 
-- [ ] Detect attempts to leave an active session.
-- [ ] Display a confirmation prompt.
-- [ ] Allow the user to continue the session.
-- [ ] Allow the user to end and leave the session.
-- [ ] Avoid showing warnings after session completion.
+- [x] Detect attempts to leave an active session.
+- [x] Display a confirmation prompt.
+- [x] Allow the user to continue the session.
+- [x] Allow the user to end and leave the session.
+- [x] Avoid showing warnings after session completion.
 
 ---
 
@@ -744,28 +746,28 @@ Initial routes:
 
 ### 76. Handle Invalid Stored Data
 
-- [ ] Detect invalid settings.
-- [ ] Detect invalid attempts.
-- [ ] Detect invalid sessions.
-- [ ] Detect invalid mistake patterns.
-- [ ] Reset only the affected data category.
-- [ ] Avoid crashing the application.
+- [x] Detect invalid settings.
+- [x] Detect invalid attempts.
+- [x] Detect invalid sessions.
+- [x] Detect invalid mistake patterns.
+- [x] Reset only the affected data category.
+- [x] Avoid crashing the application.
 
 ### 77. Handle Question-Generation Failures
 
-- [ ] Validate every generated question.
-- [ ] Retry generation after an invalid result.
-- [ ] Set a maximum retry count.
-- [ ] Provide a fallback question.
-- [ ] Log useful development errors.
+- [x] Validate every generated question.
+- [x] Retry generation after an invalid result.
+- [x] Set a maximum retry count.
+- [x] Provide a fallback question.
+- [x] Log useful development errors.
 
 ### 78. Add User-Friendly Error Messages
 
-- [ ] Add a general error component.
-- [ ] Explain storage errors in simple language.
-- [ ] Explain missing-session errors.
-- [ ] Provide a safe way to return home.
-- [ ] Avoid exposing technical stack traces.
+- [x] Add a general error component.
+- [x] Explain storage errors in simple language.
+- [x] Explain missing-session errors.
+- [x] Provide a safe way to return home.
+- [x] Avoid exposing technical stack traces.
 
 ---
 
@@ -773,47 +775,47 @@ Initial routes:
 
 ### 79. Complete Unit Tests
 
-- [ ] Test all arithmetic generators.
-- [ ] Test difficulty boundaries.
-- [ ] Test distractor generation.
-- [ ] Test answer-choice uniqueness.
-- [ ] Test statistics calculations.
-- [ ] Test mistake-pattern updates.
-- [ ] Test similar-question generation.
-- [ ] Test mastery rules.
-- [ ] Test storage serialization and validation.
+- [x] Test all arithmetic generators.
+- [x] Test difficulty boundaries.
+- [x] Test distractor generation.
+- [x] Test answer-choice uniqueness.
+- [x] Test statistics calculations.
+- [x] Test mistake-pattern updates.
+- [x] Test similar-question generation.
+- [x] Test mastery rules.
+- [x] Test storage serialization and validation.
 
 ### 80. Complete Component Tests
 
-- [ ] Test operation selection.
-- [ ] Test difficulty selection.
-- [ ] Test answer selection.
-- [ ] Test card flipping.
-- [ ] Test right and wrong buttons.
-- [ ] Test progress updates.
-- [ ] Test session completion.
-- [ ] Test statistics display.
-- [ ] Test confirmation dialogs.
+- [x] Test operation selection.
+- [x] Test difficulty selection.
+- [x] Test answer selection.
+- [x] Test card flipping.
+- [x] Test right and wrong buttons.
+- [x] Test progress updates.
+- [x] Test session completion.
+- [x] Test statistics display.
+- [x] Test confirmation dialogs.
 
 ### 81. Complete Integration Tests
 
-- [ ] Test a full addition session.
-- [ ] Test a mixed-operation session.
-- [ ] Test continuous practice.
-- [ ] Test an incorrect answer creating a mistake pattern.
-- [ ] Test mistake-review generation.
-- [ ] Test mastery completion.
-- [ ] Test persistence after a browser refresh.
-- [ ] Test resetting statistics.
+- [x] Test a full addition session.
+- [x] Test a mixed-operation session.
+- [x] Test continuous practice.
+- [x] Test an incorrect answer creating a mistake pattern.
+- [x] Test mistake-review generation.
+- [x] Test mastery completion.
+- [x] Test persistence after a browser refresh.
+- [x] Test resetting statistics.
 
 ### 82. Complete Accessibility Testing
 
-- [ ] Complete a session using only the keyboard.
+- [x] Complete a session using only the keyboard.
 - [ ] Test with a screen reader.
-- [ ] Test reduced-motion mode.
+- [x] Test reduced-motion mode.
 - [ ] Test browser zoom.
-- [ ] Run an automated accessibility checker.
-- [ ] Manually review reported issues.
+- [x] Run an automated accessibility checker.
+- [x] Manually review reported issues.
 
 ---
 
@@ -821,25 +823,27 @@ Initial routes:
 
 ### 83. Optimize React Rendering
 
-- [ ] Identify unnecessary component re-renders.
-- [ ] Memoize expensive statistics calculations.
-- [ ] Keep question generation outside render logic.
-- [ ] Avoid unnecessary global state updates.
+- [x] Identify unnecessary component re-renders.
+- [x] Memoize expensive statistics calculations.
+- [x] Keep question generation outside render logic.
+- [x] Avoid unnecessary global state updates.
 
 ### 84. Manage Large Practice Histories
 
-- [ ] Test with several thousand attempts.
-- [ ] Measure local-storage usage.
-- [ ] Limit the number of detailed recent sessions.
-- [ ] Summarize older attempt records if necessary.
+- [x] Test with several thousand attempts.
+- [x] Measure local-storage usage.
+- [x] Limit the number of detailed recent sessions.
+- [x] Summarize older attempt records if necessary.
 - [ ] Preserve aggregate statistics when archiving details.
+
+Archiving was not necessary for the measured 5,000-attempt workload. All original attempts and aggregate statistics are retained; this conditional archiving item remains open if an archive is introduced.
 
 ### 85. Improve Loading Performance
 
-- [ ] Measure the initial bundle size.
-- [ ] Lazy-load statistics and settings pages.
-- [ ] Remove unused dependencies.
-- [ ] Optimize fonts and images.
+- [x] Measure the initial bundle size.
+- [x] Lazy-load statistics and settings pages.
+- [x] Remove unused dependencies.
+- [x] Optimize fonts and images.
 - [ ] Test on slower devices.
 
 ---
@@ -848,15 +852,15 @@ Initial routes:
 
 ### 86. Complete Privacy Review
 
-- [ ] Confirm that no personal information is collected.
-- [ ] Confirm that practice data remains in the browser.
-- [ ] Remove unnecessary tracking services.
-- [ ] Avoid child-facing advertisements.
-- [ ] Explain that clearing browser data removes progress.
+- [x] Confirm that no personal information is collected.
+- [x] Confirm that practice data remains in the browser.
+- [x] Remove unnecessary tracking services.
+- [x] Avoid child-facing advertisements.
+- [x] Explain that clearing browser data removes progress.
 
 ### 87. Complete Browser Testing
 
-- [ ] Test in Chrome.
+- [x] Test in Chrome.
 - [ ] Test in Safari.
 - [ ] Test in Firefox.
 - [ ] Test in Microsoft Edge.
@@ -865,16 +869,16 @@ Initial routes:
 
 ### 88. Prepare the Production Build
 
-- [ ] Run all tests.
-- [ ] Resolve linting errors.
-- [ ] Resolve TypeScript errors.
-- [ ] Create the production build.
-- [ ] Test the production build locally.
-- [ ] Configure deployment routing for React Router.
+- [x] Run all tests.
+- [x] Resolve linting errors.
+- [x] Resolve TypeScript errors.
+- [x] Create the production build.
+- [x] Test the production build locally.
+- [x] Configure deployment routing for React Router.
 
 ### 89. Deploy the Application
 
-- [ ] Select a hosting service.
+- [x] Select a hosting service.
 - [ ] Deploy the production build.
 - [ ] Verify every route.
 - [ ] Verify local-storage persistence.

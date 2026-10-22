@@ -16,7 +16,9 @@ export function explainQuestion(question: Question): string {
   }
 }
 
-export function spokenProblem(question: Question): string {
+export function spokenProblem(
+  question: Pick<Question, 'operation' | 'firstOperand' | 'secondOperand'>,
+): string {
   const words = {
     addition: 'plus',
     subtraction: 'minus',

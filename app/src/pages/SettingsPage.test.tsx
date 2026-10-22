@@ -12,18 +12,20 @@ import { startPracticeSession } from '../services/practiceSession';
 import * as sound from '../services/soundService';
 
 afterEach(() => vi.restoreAllMocks());
-function mount(path = '/settings') {
-  return render(
+async function mount(path = '/settings') {
+  const view = render(
     <MemoryRouter initialEntries={[path]}>
       <App />
     </MemoryRouter>,
   );
+  await screen.findByRole('main');
+  return view;
 }
 
 describe('saved settings and application clearing', () => {
   it('persists defaults and loads them into a new setup after a full remount', async () => {
     const user = userEvent.setup();
-    const view = mount();
+    const view = await mount();
     expect(screen.getByRole('checkbox', { name: 'Addition' })).toBeDisabled();
     await user.click(screen.getByRole('checkbox', { name: 'Division' }));
     await user.click(screen.getByRole('checkbox', { name: 'Addition' }));
@@ -43,7 +45,7 @@ describe('saved settings and application clearing', () => {
       soundEnabled: true,
     });
     view.unmount();
-    mount('/practice/setup');
+    await mount('/practice/setup');
     expect(screen.getByRole('checkbox', { name: 'Division' })).toBeChecked();
     expect(
       screen.getByRole('checkbox', { name: 'Addition' }),
@@ -58,7 +60,7 @@ describe('saved settings and application clearing', () => {
       defaultSessionLength: 'continuous',
     });
     const user = userEvent.setup();
-    mount('/practice/setup');
+    await mount('/practice/setup');
     await user.click(screen.getByRole('radio', { name: /Beginner/ }));
     await user.click(screen.getByRole('radio', { name: /5 questions/ }));
     await user.click(screen.getByRole('button', { name: 'Start Session' }));
@@ -71,7 +73,7 @@ describe('saved settings and application clearing', () => {
   });
   it('changing defaults replaces previous setup choices but leaves the current question configuration alone', async () => {
     const user = userEvent.setup();
-    mount('/practice/setup');
+    await mount('/practice/setup');
     await user.click(screen.getByRole('button', { name: 'Start Session' }));
     await user.click(screen.getByRole('link', { name: 'Settings' }));
     await user.selectOptions(
@@ -102,7 +104,7 @@ describe('saved settings and application clearing', () => {
     localStorage.setItem('another-app', 'keep');
     const original = localStorage.getItem(STORAGE_KEYS.history);
     const user = userEvent.setup();
-    mount();
+    await mount();
     await user.click(
       screen.getByRole('button', { name: 'Clear All Application Data' }),
     );
@@ -157,7 +159,7 @@ describe('saved settings and application clearing', () => {
       remove.call(this, key);
     });
     const user = userEvent.setup();
-    mount();
+    await mount();
     await user.click(
       screen.getByRole('button', { name: 'Clear All Application Data' }),
     );
@@ -178,7 +180,7 @@ describe('saved settings and application clearing', () => {
       .spyOn(sound, 'playAnswerSound')
       .mockImplementation(() => {});
     const user = userEvent.setup();
-    mount();
+    await mount();
     await user.click(screen.getByRole('checkbox', { name: /Sound effects/ }));
     await user.click(screen.getByRole('link', { name: 'Back to practice' }));
     await user.click(screen.getByRole('button', { name: 'Start Session' }));
@@ -220,6 +222,8 @@ describe('card preview preferences', () => {
     await user.click(screen.getByRole('button', { name: 'I Got It Wrong' }));
     expect(screen.getByText('Question 2 of 10')).toBeVisible();
     expect(screen.getByRole('button', { name: 'Flip Card' })).toBeDisabled();
-    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+    expect(
+      screen.getByRole('status', { name: 'Card result' }),
+    ).toBeEmptyDOMElement();
   });
 });

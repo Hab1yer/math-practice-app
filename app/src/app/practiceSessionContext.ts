@@ -9,6 +9,12 @@ export const PracticeSessionContext = createContext<{
   state: PracticeSessionState | null;
   error: string | null;
   startSession: (configuration: PracticeConfiguration) => boolean;
-  recordResult: (submission: CardSubmission) => void;
+  recordResult: (submission: CardSubmission) => PracticeSessionState | void;
   endSession: () => void;
+  isSessionActive?: () => boolean;
+  updateCard?: (
+    questionId: string,
+    selectedAnswer: number,
+    flipped: boolean,
+  ) => void;
 } | null>(null);

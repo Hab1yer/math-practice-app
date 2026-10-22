@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import QuestionCard from '../components/practice/QuestionCard';
 import EndSessionDialog from '../components/practice/EndSessionDialog';
@@ -9,30 +9,38 @@ import { difficultyOptions, operationOptions } from '../utils/practiceOptions';
 import { playAnswerSound } from '../services/soundService';
 
 export default function PracticeSessionPage() {
-  const { state, recordResult, endSession, error } = usePracticeSession();
+  const { state, recordResult, endSession, error, updateCard } =
+    usePracticeSession();
   const { preferences } = useAppPreferences();
   const [confirmEnd, setConfirmEnd] = useState(false);
   const endButton = useRef<HTMLButtonElement>(null);
   const dialogWasOpen = useRef(false);
+  const [enteredActive] = useState(() => state?.isActive ?? false);
+  const navigate = useNavigate();
   useEffect(() => {
     if (dialogWasOpen.current && !confirmEnd) endButton.current?.focus();
     dialogWasOpen.current = confirmEnd;
   }, [confirmEnd]);
-  if (!state) return <Navigate to="/practice/setup" replace />;
-  if (!state.isActive) return <Navigate to="/practice/summary" replace />;
+  if (!state)
+    return (
+      <Navigate to="/practice/setup" replace state={{ missingSession: true }} />
+    );
+  if (!state.isActive)
+    return enteredActive ? null : <Navigate to="/practice/summary" replace />;
   const { session, currentQuestion, currentQuestionIndex } = state;
   function cancelEnd() {
     setConfirmEnd(false);
   }
   return (
     <PageContainer
-      eyebrow="One small step at a time"
-      title="Your practice space"
+      title={
+        session.mode === 'mistake-review'
+          ? 'Mistake review'
+          : 'Your practice space'
+      }
+      focusHeading={!currentQuestion}
     >
       <div className="practice-session" inert={confirmEnd}>
-        <p className="intro">
-          Take your time. Each question is a chance to learn.
-        </p>
         <p className="session-context">
           {operationOptions
             .filter((option) => session.operations.includes(option.value))
@@ -45,9 +53,28 @@ export default function PracticeSessionPage() {
             )?.label
           }
         </p>
+        {preferences.feedbackEffectsEnabled && state.feedback && (
+          <p
+            className="practice-feedback"
+            role="status"
+            aria-label="Practice feedback"
+          >
+            {state.feedback}
+          </p>
+        )}
+        <p
+          className="sr-only"
+          role="status"
+          aria-label="Session progress"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {session.attempted} answers completed. {session.correct} marked right
+          and {session.incorrect} marked wrong.
+        </p>
         <p className="field-hint">
           Finished answers are saved on this device when storage is available.
-          Refreshing starts a new session.
+          You can refresh and return to this card.
         </p>
         <dl className="session-totals" aria-label="Current session totals">
           <div>
@@ -83,14 +110,21 @@ export default function PracticeSessionPage() {
             totalQuestions={session.sessionLength}
             animationEnabled={preferences.cardAnimationEnabled}
             showExplanations={preferences.showExplanations}
+            initialSelectedAnswer={state.selectedAnswer}
+            initiallyFlipped={state.isCardFlipped}
+            onInteraction={(selectedAnswer, flipped) =>
+              updateCard?.(currentQuestion.id, selectedAnswer, flipped)
+            }
             onResult={(selfReportedCorrect, selectedAnswer) => {
               if (preferences.soundEnabled)
                 playAnswerSound(selfReportedCorrect);
-              recordResult({
+              const next = recordResult({
                 questionId: currentQuestion.id,
                 selectedAnswer,
                 selfReportedCorrect,
               });
+              if (next && !next.isActive)
+                navigate('/practice/summary', { replace: true });
             }}
           />
         ) : (
@@ -109,7 +143,13 @@ export default function PracticeSessionPage() {
         </button>
       </div>
       {confirmEnd && (
-        <EndSessionDialog onCancel={cancelEnd} onConfirm={endSession} />
+        <EndSessionDialog
+          onCancel={cancelEnd}
+          onConfirm={() => {
+            endSession();
+            navigate('/practice/summary', { replace: true });
+          }}
+        />
       )}
     </PageContainer>
   );

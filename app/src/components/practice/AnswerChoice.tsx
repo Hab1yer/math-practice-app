@@ -23,6 +23,9 @@ export default function AnswerChoice({
       onClick={onSelect}
     >
       <span>{value}</span>
+      <small className="answer-key" aria-hidden="true">
+        {position}
+      </small>
       {selected && <small aria-hidden="true">✓ Selected</small>}
     </button>
   );

@@ -7,16 +7,21 @@ import {
   endPracticeSession,
 } from '../services/practiceSession';
 import { PracticeSessionContext } from './practiceSessionContext';
+import type { ReviewOptions } from '../services/mistakeReview';
 
 export default function PracticeSessionProvider({
   children,
   onPersist,
+  getReviewOptions,
+  initialState = null,
 }: {
   children: ReactNode;
   onPersist?: (state: PracticeSessionState) => void;
+  getReviewOptions?: () => ReviewOptions;
+  initialState?: PracticeSessionState | null;
 }) {
-  const [state, setState] = useState<PracticeSessionState | null>(null);
-  const current = useRef<PracticeSessionState | null>(null);
+  const [state, setState] = useState<PracticeSessionState | null>(initialState);
+  const current = useRef<PracticeSessionState | null>(initialState);
   const [error, setError] = useState<string | null>(null);
   function commit(next: PracticeSessionState) {
     if (next === current.current) return;
@@ -30,9 +35,10 @@ export default function PracticeSessionProvider({
       value={{
         state,
         error,
+        isSessionActive: () => current.current?.isActive ?? false,
         startSession: (configuration) => {
           try {
-            commit(startPracticeSession(configuration));
+            commit(startPracticeSession(configuration, getReviewOptions?.()));
             return true;
           } catch {
             setError(
@@ -44,7 +50,13 @@ export default function PracticeSessionProvider({
         recordResult: (submission) => {
           if (!current.current) return;
           try {
-            commit(recordPracticeResult(current.current, submission));
+            const next = recordPracticeResult(
+              current.current,
+              submission,
+              getReviewOptions?.(),
+            );
+            commit(next);
+            return next;
           } catch {
             setError(
               'We couldn’t prepare the next question. You can end this session and try again.',
@@ -53,6 +65,17 @@ export default function PracticeSessionProvider({
         },
         endSession: () => {
           if (current.current) commit(endPracticeSession(current.current));
+        },
+        updateCard: (questionId, selectedAnswer, flipped) => {
+          const previous = current.current;
+          if (
+            !previous?.isActive ||
+            previous.currentQuestion?.id !== questionId ||
+            !previous.currentQuestion.choices.includes(selectedAnswer) ||
+            previous.isCardFlipped
+          )
+            return;
+          commit({ ...previous, selectedAnswer, isCardFlipped: flipped });
         },
       }}
     >

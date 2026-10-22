@@ -56,16 +56,18 @@ function seed() {
   make('division', 4, [true], 21);
   make('subtraction', 2, [], 22, false);
 }
-function mount(path = '/statistics') {
-  return render(
+async function mount(path = '/statistics') {
+  const view = render(
     <MemoryRouter initialEntries={[path]}>
       <App />
     </MemoryRouter>,
   );
+  await screen.findByRole('main');
+  return view;
 }
 describe('statistics page', () => {
-  it('shows all zero buckets, useful empty states and disabled reset for new users', () => {
-    mount();
+  it('shows all zero buckets, useful empty states and disabled reset for new users', async () => {
+    await mount();
     expect(
       screen.getByRole('heading', { name: 'Statistics', level: 1 }),
     ).toHaveFocus();
@@ -82,9 +84,9 @@ describe('statistics page', () => {
       screen.getByRole('link', { name: 'Start Practice' }),
     ).toHaveAttribute('href', '/practice/setup');
   });
-  it('loads saved totals, every breakdown and newest-first session details including unfinished sessions', () => {
+  it('loads saved totals, every breakdown and newest-first session details including unfinished sessions', async () => {
     seed();
-    mount();
+    await mount();
     expect(screen.getByLabelText('Overall statistics')).toHaveTextContent(
       'Attempted3Correct2Incorrect1Accuracy67%',
     );
@@ -108,7 +110,7 @@ describe('statistics page', () => {
       'datetime',
       '2026-10-22T12:00:00.000Z',
     );
-    expect(sessions[0]).toHaveTextContent('Unfinished');
+    expect(sessions[0]).toHaveTextContent('In progress');
     expect(sessions[1]).toHaveTextContent('Completed');
     expect(sessions[1]).toHaveTextContent('Division · Advanced');
     expect(sessions[1]).toHaveTextContent(
@@ -119,7 +121,7 @@ describe('statistics page', () => {
     seed();
     const before = localStorage.getItem(STORAGE_KEYS.history);
     const user = userEvent.setup();
-    mount();
+    await mount();
     await user.click(screen.getByRole('button', { name: 'Reset Statistics' }));
     expect(
       screen.getByRole('alertdialog', { name: 'Reset statistics?' }),
@@ -143,7 +145,7 @@ describe('statistics page', () => {
     localStorage.setItem('unrelated', 'keep');
     const settings = localStorage.getItem(STORAGE_KEYS.settings);
     const user = userEvent.setup();
-    const view = mount();
+    const view = await mount();
     await user.click(screen.getByRole('button', { name: 'Reset Statistics' }));
     await user.click(
       screen.getByRole('button', { name: 'Erase practice history' }),
@@ -156,7 +158,7 @@ describe('statistics page', () => {
     expect(localStorage.getItem(STORAGE_KEYS.settings)).toBe(settings);
     expect(localStorage.getItem('unrelated')).toBe('keep');
     view.unmount();
-    mount();
+    await mount();
     expect(screen.getByText('No answers recorded yet.')).toBeVisible();
     expect(createStorageService().getHistory()).toMatchObject({
       sessions: [],
@@ -170,7 +172,7 @@ describe('statistics page', () => {
       throw new DOMException('Full', 'QuotaExceededError');
     });
     const user = userEvent.setup();
-    mount();
+    await mount();
     await user.click(screen.getByRole('button', { name: 'Reset Statistics' }));
     await user.click(
       screen.getByRole('button', { name: 'Erase practice history' }),
@@ -185,7 +187,7 @@ describe('statistics page', () => {
   });
   it('updates statistics during practice and discards the active session on confirmed reset', async () => {
     const user = userEvent.setup();
-    mount('/practice/setup');
+    await mount('/practice/setup');
     await user.click(screen.getByRole('button', { name: 'Start Session' }));
     await user.click(screen.getAllByRole('button', { name: /Answer \d:/ })[0]);
     await user.click(screen.getByRole('button', { name: 'Flip Card' }));
@@ -200,7 +202,9 @@ describe('statistics page', () => {
       screen.getByRole('button', { name: 'Erase practice history' }),
     );
     await user.click(screen.getByRole('link', { name: 'Settings' }));
-    await user.click(screen.getByRole('link', { name: 'Back to practice' }));
+    await user.click(
+      await screen.findByRole('link', { name: 'Back to practice' }),
+    );
     expect(
       screen.getByRole('heading', { name: 'Choose your practice' }),
     ).toBeVisible();

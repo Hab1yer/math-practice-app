@@ -24,7 +24,7 @@ describe('practice configuration', () => {
     expect(
       screen.getByRole('radio', { name: 'Practice previous mistakes' }),
     ).toBeDisabled();
-    expect(screen.getByText(/Mistake review is coming soon/)).toBeVisible();
+    expect(screen.getByText(/No active mistakes to review/)).toBeVisible();
     expect(screen.getByRole('button', { name: 'Start Session' })).toBeEnabled();
   });
 

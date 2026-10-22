@@ -85,10 +85,10 @@ describe('question card', () => {
       );
       expect(right).toBeDisabled();
       expect(wrong).toBeDisabled();
-      expect(screen.getByRole('status')).toHaveTextContent(
-        result ? 'as correct' : 'as incorrect',
-      );
-      expect(screen.getByRole('status')).toHaveFocus();
+      expect(
+        screen.getByRole('status', { name: 'Card result' }),
+      ).toHaveTextContent(result ? 'as correct' : 'as incorrect');
+      expect(screen.getByRole('status', { name: 'Card result' })).toHaveFocus();
     },
   );
 
@@ -118,7 +118,9 @@ describe('question card', () => {
     expect(
       screen.getByRole('button', { name: 'Answer 1: 48' }),
     ).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+    expect(
+      screen.getByRole('status', { name: 'Card result' }),
+    ).toBeEmptyDOMElement();
     expect(
       screen.getByRole('heading', { name: '8 multiplied by 7 equals what?' }),
     ).toHaveFocus();

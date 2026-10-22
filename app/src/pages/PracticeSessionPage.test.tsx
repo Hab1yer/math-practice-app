@@ -60,7 +60,7 @@ describe('full practice flow', () => {
     expect(saved.sessions[0].completedAt).toBeTruthy();
     expect(screen.getByText('60%')).toBeVisible();
     expect(screen.getByLabelText('Practice details')).toHaveTextContent(
-      'OperationsAdditionDifficultyBeginnerReview questions completed0',
+      'OperationsAdditionDifficultyBeginnerModeRegular practiceReview questions completed0',
     );
     expect(
       screen.queryByRole('region', { name: 'Math question card' }),
@@ -113,7 +113,9 @@ describe('full practice flow', () => {
         name: 'Settings',
       }),
     );
-    await user.click(screen.getByRole('checkbox', { name: /Card animations/ }));
+    await user.click(
+      await screen.findByRole('checkbox', { name: /Card animations/ }),
+    );
     await user.click(screen.getByRole('link', { name: 'Back to practice' }));
     expect(screen.getByText('Question 2 of 10')).toBeVisible();
     expect(

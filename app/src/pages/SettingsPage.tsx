@@ -33,10 +33,19 @@ export default function SettingsPage() {
     }
   }
   const toggles: {
-    key: 'soundEnabled' | 'cardAnimationEnabled' | 'showExplanations';
+    key:
+      | 'soundEnabled'
+      | 'cardAnimationEnabled'
+      | 'showExplanations'
+      | 'feedbackEffectsEnabled';
     label: string;
     description: string;
   }[] = [
+    {
+      key: 'feedbackEffectsEnabled',
+      label: 'Encouragement',
+      description: 'Show a short supportive message after each answer.',
+    },
     {
       key: 'soundEnabled',
       label: 'Sound effects',
@@ -171,6 +180,38 @@ export default function SettingsPage() {
               </select>
             </label>
           </div>
+        </section>
+        <section
+          className="settings-section settings-data"
+          aria-labelledby="review-settings-title"
+        >
+          <h2 id="review-settings-title">Mistake review</h2>
+          <div className="settings-selects">
+            <label>
+              Correct reviews to master a pattern
+              <select
+                value={preferences.masteryThreshold}
+                aria-describedby="mastery-threshold-hint"
+                onChange={(event) =>
+                  updatePreferences({
+                    masteryThreshold: Number(event.target.value),
+                  })
+                }
+              >
+                {[...new Set([2, 3, 5, 10, preferences.masteryThreshold])]
+                  .sort((a, b) => a - b)
+                  .map((value) => (
+                    <option key={value} value={value}>
+                      {value} correct answers
+                    </option>
+                  ))}
+              </select>
+            </label>
+          </div>
+          <p id="mastery-threshold-hint" className="field-hint">
+            A miss resets progress. Changing this goal updates mastery for saved
+            patterns.
+          </p>
         </section>
         <section
           className="settings-section settings-data"

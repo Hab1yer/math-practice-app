@@ -86,7 +86,7 @@ describe('session summary actions', () => {
     ).toBeDisabled();
     expect(
       screen.getByRole('button', { name: 'Practice Mistakes' }),
-    ).toHaveAccessibleDescription(/Mistake review is coming soon/);
+    ).toHaveAccessibleDescription(/No active mistakes to review/);
     expect(
       screen.getByRole('link', { name: 'View Statistics' }),
     ).toHaveAttribute('href', '/statistics');

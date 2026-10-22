@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import OperationSelector from '../components/practice/OperationSelector';
 import DifficultySelector from '../components/practice/DifficultySelector';
@@ -9,6 +9,8 @@ import { usePracticeConfiguration } from '../hooks/usePracticeConfiguration';
 import type { PracticeConfiguration } from '../types/session';
 import { usePracticeSession } from '../hooks/usePracticeSession';
 import { useAppPreferences } from '../hooks/useAppPreferences';
+import { PracticeHistoryContext } from '../app/practiceHistoryContext';
+import { eligibleMistakes } from '../services/mistakeReview';
 
 export default function PracticeSetupPage() {
   const { configuration, setConfiguration } = usePracticeConfiguration();
@@ -23,23 +25,31 @@ export default function PracticeSetupPage() {
     },
   );
   const navigate = useNavigate();
+  const location = useLocation();
+  const history = useContext(PracticeHistoryContext);
+  const active = (history.mistakePatterns ?? []).filter(
+    (pattern) => !pattern.mastered,
+  );
+  const matching = eligibleMistakes(active, draft);
+  const unavailable =
+    !draft.operations.length ||
+    (draft.mode === 'mistake-review' && !matching.length);
 
   function startSession(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!draft.operations.length) return;
+    if (unavailable) return;
     if (!beginSession(draft)) return;
     setConfiguration(draft);
     navigate('/practice/session');
   }
 
   return (
-    <PageContainer
-      eyebrow="Make room for a little discovery"
-      title="Choose your practice"
-    >
-      <p className="intro">
-        A quick warm-up or a bigger challenge? Make it yours.
-      </p>
+    <PageContainer title="Choose your practice">
+      {location.state?.missingSession && (
+        <p className="field-hint">
+          No unfinished session was found. Choose your practice to begin.
+        </p>
+      )}
       <form className="setup-form" onSubmit={startSession}>
         {error && <p role="alert">{error}</p>}
         <OperationSelector
@@ -67,33 +77,43 @@ export default function PracticeSetupPage() {
               />
               <span className="choice-label">Regular practice</span>
             </label>
-            <label className="choice-option choice-unavailable">
+            <label
+              className={`choice-option${active.length ? '' : ' choice-unavailable'}`}
+            >
               <input
                 type="radio"
                 name="practice-mode"
                 value="mistake-review"
-                disabled
+                disabled={!active.length}
+                checked={draft.mode === 'mistake-review'}
+                onChange={() => setDraft({ ...draft, mode: 'mistake-review' })}
                 aria-describedby="review-hint"
               />
               <span className="choice-label">Practice previous mistakes</span>
             </label>
           </div>
-          <p id="review-hint" className="field-hint">
-            Mistake review is coming soon. Start with regular practice.
+          <p id="review-hint" className="field-hint" role="status">
+            {active.length === 0
+              ? 'No active mistakes to review. Mark an answer wrong in regular practice to save one.'
+              : `${active.length} active mistake ${active.length === 1 ? 'pattern' : 'patterns'} · ${matching.length} match your operations and difficulty.`}
+            {draft.mode === 'mistake-review' &&
+              active.length > 0 &&
+              (matching.length === 0
+                ? ' Choose another operation or difficulty, or use regular practice.'
+                : ' Related questions use these operations and difficulty. Review ends when these patterns are mastered.')}
           </p>
         </fieldset>
         <div className="setup-footer">
-          <p className="field-hint">
-            Ready for a little discovery? Let’s get started.
-          </p>
           <button
             className="button-link"
             type="submit"
-            disabled={draft.operations.length === 0}
+            disabled={unavailable}
             aria-describedby={
               draft.operations.length === 0
                 ? 'operations-validation'
-                : undefined
+                : draft.mode === 'mistake-review'
+                  ? 'review-hint'
+                  : undefined
             }
           >
             Start Session <span aria-hidden="true">→</span>

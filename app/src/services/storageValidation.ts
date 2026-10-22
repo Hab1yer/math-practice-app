@@ -1,8 +1,12 @@
 import type { AppSettings } from '../types/settings';
 import type { MistakePattern } from '../types/mistake';
-import type { PracticeAttempt, PracticeSession } from '../types/session';
+import type {
+  PracticeAttempt,
+  PracticeSession,
+  PracticeSessionState,
+} from '../types/session';
 import { arithmeticSymbols } from './difficultyRules';
-import { isValidConfiguration } from './practiceSession';
+import { isValidConfiguration } from './practiceConfiguration';
 import { isValidQuestion } from '../utils/validation';
 
 export interface PracticeHistory {
@@ -11,6 +15,53 @@ export interface PracticeHistory {
   resetAt?: string;
   // Validated/reconciled independently so damaged patterns cannot erase valid answers.
   mistakePatterns?: MistakePattern[];
+  activeSession?: ActiveSessionCheckpoint;
+}
+export type ActiveSessionCheckpoint = Omit<
+  PracticeSessionState,
+  'attempts' | 'reviewPatterns' | 'feedback'
+>;
+
+/** Checkpoints are recoverable independently of the answer ledger. */
+export function isValidActiveSession(
+  value: unknown,
+  history: PracticeHistory,
+): value is ActiveSessionCheckpoint {
+  if (
+    !isRecord(value) ||
+    value.isActive !== true ||
+    !isValidSession(value.session) ||
+    value.session.completedAt !== undefined ||
+    value.currentQuestionIndex !== value.session.attempted ||
+    (value.session.sessionLength !== 'continuous' &&
+      value.session.attempted >= value.session.sessionLength) ||
+    (value.isCardFlipped !== undefined &&
+      typeof value.isCardFlipped !== 'boolean')
+  )
+    return false;
+  const sessionId = value.session.id;
+  const saved = history.sessions.find((session) => session.id === sessionId);
+  if (!saved || JSON.stringify(saved) !== JSON.stringify(value.session))
+    return false;
+  const question = value.currentQuestion;
+  if (question === null)
+    return value.selectedAnswer === undefined && !value.isCardFlipped;
+  if (
+    !isValidQuestion(question) ||
+    question.difficulty !== saved.difficulty ||
+    !saved.operations.includes(question.operation) ||
+    question.source !== (saved.mode ?? 'regular') ||
+    history.attempts.some((attempt) => attempt.questionId === question.id) ||
+    (question.source === 'mistake-review' &&
+      !history.mistakePatterns?.some(
+        (pattern) => pattern.id === question.mistakePatternId,
+      )) ||
+    (value.selectedAnswer !== undefined &&
+      !question.choices.includes(value.selectedAnswer as number)) ||
+    (value.isCardFlipped && value.selectedAnswer === undefined)
+  )
+    return false;
+  return true;
 }
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
@@ -49,10 +100,14 @@ export function isValidSession(value: unknown): value is PracticeSession {
   if (!isRecord(value)) return false;
   return (
     id(value.id) &&
+    (value.completionReason === undefined ||
+      (value.completionReason === 'mastered' &&
+        value.mode === 'mistake-review' &&
+        date(value.completedAt))) &&
     date(value.startedAt) &&
     (value.completedAt === undefined ||
       (date(value.completedAt) && value.completedAt >= value.startedAt)) &&
-    isValidConfiguration({ ...value, mode: 'regular' }) &&
+    isValidConfiguration({ ...value, mode: value.mode ?? 'regular' }) &&
     whole(value.attempted) &&
     whole(value.correct) &&
     whole(value.incorrect) &&
@@ -72,6 +127,8 @@ export function isValidAttempt(value: unknown): value is PracticeAttempt {
     !whole(value.selectedAnswer) ||
     typeof value.selfReportedCorrect !== 'boolean' ||
     (value.source !== 'regular' && value.source !== 'mistake-review') ||
+    (value.source === 'mistake-review' && !id(value.mistakePatternId)) ||
+    (value.source === 'regular' && value.mistakePatternId !== undefined) ||
     !whole(value.correctAnswer)
   )
     return false;
@@ -110,7 +167,10 @@ export function isValidHistory(value: unknown): value is PracticeHistory {
     return false;
   const questions = new Set<string>();
   const totals = new Map<string, { attempted: number; correct: number }>();
-  for (const attempt of attempts) {
+  const origins = new Map<string, number>();
+  for (const attempt of [...attempts].sort((a, b) =>
+    a.attemptedAt.localeCompare(b.attemptedAt),
+  )) {
     const session = byId.get(attempt.sessionId);
     const questionKey = JSON.stringify([attempt.sessionId, attempt.questionId]);
     if (
@@ -118,11 +178,24 @@ export function isValidHistory(value: unknown): value is PracticeHistory {
       questions.has(questionKey) ||
       !session.operations.includes(attempt.operation) ||
       session.difficulty !== attempt.difficulty ||
+      (session.mode !== undefined && session.mode !== attempt.source) ||
+      (attempt.source === 'mistake-review' &&
+        origins.get(attempt.mistakePatternId!) !== attempt.difficulty) ||
       attempt.attemptedAt < session.startedAt ||
       (session.completedAt && attempt.attemptedAt > session.completedAt)
     )
       return false;
     questions.add(questionKey);
+    if (attempt.source === 'regular' && !attempt.selfReportedCorrect)
+      origins.set(
+        JSON.stringify([
+          attempt.operation,
+          attempt.difficulty,
+          attempt.firstOperand,
+          attempt.secondOperand,
+        ]),
+        attempt.difficulty,
+      );
     const total = totals.get(session.id) ?? { attempted: 0, correct: 0 };
     total.attempted++;
     if (attempt.selfReportedCorrect) total.correct++;

@@ -7,6 +7,7 @@ import { randomInteger } from '../utils/math';
 import { createId } from '../utils/ids';
 import { isValidQuestion } from '../utils/validation';
 import { generateAnswerChoices } from './answerChoices';
+import { logDevelopmentError } from './developmentLog';
 import {
   arithmeticSymbols,
   difficultyRules,
@@ -119,7 +120,8 @@ export function generateQuestion(
         generateOperands(operation, difficulty),
       );
       if (isValidQuestion(question)) return question;
-    } catch {
+    } catch (error) {
+      logDevelopmentError('Retrying question generation', error);
       // Retry transient generation failures a bounded number of times.
     }
   }

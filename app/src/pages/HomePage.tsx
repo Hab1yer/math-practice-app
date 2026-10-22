@@ -1,12 +1,19 @@
 import { Link } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
+import { usePracticeSession } from '../hooks/usePracticeSession';
 
 export default function HomePage() {
+  const { state } = usePracticeSession();
   return (
     <PageContainer
       eyebrow="A little practice. A world of possibility."
       title="Let’s make math click."
     >
+      {state?.isActive && (
+        <p className="resume-notice">
+          <Link to="/practice/session">Resume your saved session →</Link>
+        </p>
+      )}
       <div className="home-content">
         <div className="welcome-copy">
           <p className="intro">

@@ -5,6 +5,7 @@ import { usePracticeSession } from '../hooks/usePracticeSession';
 import { difficultyOptions, operationOptions } from '../utils/practiceOptions';
 import { PracticeHistoryContext } from '../app/practiceHistoryContext';
 import { usePracticeConfiguration } from '../hooks/usePracticeConfiguration';
+import { eligibleMistakes } from '../services/mistakeReview';
 
 export default function SessionSummaryPage() {
   const { state: currentState, startSession, error } = usePracticeSession();
@@ -31,11 +32,14 @@ export default function SessionSummaryPage() {
   if (!state) return <Navigate to="/practice/setup" replace />;
   if (state.isActive) return <Navigate to="/practice/session" replace />;
   const { session, attempts } = state;
+  const active = (history.mistakePatterns ?? []).filter(
+    (pattern) => !pattern.mastered,
+  );
   const configuration = {
     operations: [...session.operations],
     difficulty: session.difficulty,
     sessionLength: session.sessionLength,
-    mode: 'regular' as const,
+    mode: session.mode ?? 'regular',
   };
   const accuracy = session.attempted
     ? Math.round((session.correct / session.attempted) * 100)
@@ -49,9 +53,24 @@ export default function SessionSummaryPage() {
       navigate('/practice/session');
     }
   }
+  function practiceMistakes() {
+    if (!active.length) return;
+    setConfiguration({
+      ...configuration,
+      mode: 'mistake-review',
+      difficulty: active[0].difficulty,
+      operations: operationOptions.map((option) => option.value),
+    });
+    navigate('/practice/setup');
+  }
   return (
     <PageContainer title="Session complete" eyebrow="Small steps count">
       <p className="intro">Nice practice! Here’s how this session added up.</p>
+      {session.completionReason === 'mastered' && (
+        <p className="review-complete" role="status">
+          All mistakes matching this session are mastered.
+        </p>
+      )}
       <div className="summary-accuracy">
         <p className="eyebrow">Your accuracy</p>
         <p className="accuracy-value">{accuracy}%</p>
@@ -96,18 +115,39 @@ export default function SessionSummaryPage() {
           </dd>
         </div>
         <div>
+          <dt>Mode</dt>
+          <dd>
+            {session.mode === 'mistake-review'
+              ? 'Mistake review'
+              : 'Regular practice'}
+          </dd>
+        </div>
+        <div>
           <dt>Review questions completed</dt>
           <dd>{reviewCount}</dd>
         </div>
       </dl>
       {error && <p role="alert">{error}</p>}
       <div className="summary-actions" aria-label="Next practice actions">
-        <button className="button-link" onClick={practiceAgain}>
+        <button
+          className="button-link"
+          onClick={practiceAgain}
+          disabled={
+            configuration.mode === 'mistake-review' &&
+            !eligibleMistakes(active, configuration).length
+          }
+          aria-describedby={
+            configuration.mode === 'mistake-review'
+              ? 'summary-review-hint'
+              : undefined
+          }
+        >
           Practice Again <span aria-hidden="true">→</span>
         </button>
         <button
           className="button-link button-secondary"
-          disabled
+          disabled={!active.length}
+          onClick={practiceMistakes}
           aria-describedby="summary-review-hint"
         >
           Practice Mistakes
@@ -124,8 +164,14 @@ export default function SessionSummaryPage() {
         </Link>
       </div>
       <p id="summary-review-hint" className="field-hint">
-        Mistake review is coming soon. You can practice again or choose a new
-        challenge.
+        {active.length
+          ? `${active.length} active mistake ${active.length === 1 ? 'pattern' : 'patterns'} to review.`
+          : 'No active mistakes to review.'}
+        {active.length > 0 &&
+        configuration.mode === 'mistake-review' &&
+        !eligibleMistakes(active, configuration).length
+          ? ' None match this session. Choose Practice Mistakes to review another level.'
+          : ''}
       </p>
       <p className="field-hint">
         Your results are saved in this browser on this device when storage is

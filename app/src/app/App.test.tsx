@@ -25,7 +25,10 @@ describe('application navigation', () => {
       within(home).getByRole('link', { name: new RegExp(action) }),
     );
 
-    const heading = screen.getByRole('heading', { level: 1, name: title });
+    const heading = await screen.findByRole('heading', {
+      level: 1,
+      name: title,
+    });
     expect(heading).toHaveFocus();
     if (action === 'Start Practice') {
       expect(
