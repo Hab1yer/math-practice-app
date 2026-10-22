@@ -1,4 +1,5 @@
 import type { AppSettings } from '../types/settings';
+import type { MistakePattern } from '../types/mistake';
 import type { PracticeAttempt, PracticeSession } from '../types/session';
 import { arithmeticSymbols } from './difficultyRules';
 import { isValidConfiguration } from './practiceSession';
@@ -8,6 +9,8 @@ export interface PracticeHistory {
   sessions: PracticeSession[];
   attempts: PracticeAttempt[];
   resetAt?: string;
+  // Validated/reconciled independently so damaged patterns cannot erase valid answers.
+  mistakePatterns?: MistakePattern[];
 }
 
 export function isRecord(value: unknown): value is Record<string, unknown> {

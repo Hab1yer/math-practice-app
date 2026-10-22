@@ -50,6 +50,14 @@ describe('application persistence', () => {
     const history = createStorageService().getHistory();
     expect(history.attempts).toHaveLength(1);
     expect(history.attempts[0].selfReportedCorrect).toBe(false);
+    const patterns = createStorageService().getMistakePatterns();
+    expect(patterns).toHaveLength(1);
+    expect(patterns[0]).toMatchObject({
+      operation: history.attempts[0].operation,
+      incorrectCount: 1,
+      similarCorrectCount: 0,
+      mastered: false,
+    });
     expect(history.sessions[0]).toMatchObject({
       attempted: 1,
       correct: 0,
@@ -80,6 +88,7 @@ describe('application persistence', () => {
     expect(createStorageService().getHistory().attempts).toEqual(
       history.attempts,
     );
+    expect(createStorageService().getMistakePatterns()).toEqual(patterns);
   });
   it('keeps a complete interaction usable with a saving-space warning when writes fail', async () => {
     const user = userEvent.setup();

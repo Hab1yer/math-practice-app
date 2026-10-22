@@ -7,6 +7,7 @@ import {
   recoverInterruptedClear,
 } from './storageClear';
 import type { BrowserStorage } from './storageClear';
+import { isValidMistakePattern, trackMistakes } from './mistakeTracking';
 
 export const STORAGE_VERSION = 1;
 export const STORAGE_KEYS = {
@@ -91,11 +92,44 @@ export function createStorageService(
     }
   }
   let settings = read('settings', DEFAULT_SETTINGS, isValidSettings);
-  let history = read<PracticeHistory>(
-    'history',
-    { sessions: [], attempts: [] },
-    isValidHistory,
-  );
+  function readHistory(): Loaded<PracticeHistory> {
+    const loaded = read<PracticeHistory>(
+      'history',
+      { sessions: [], attempts: [] },
+      isValidHistory,
+    );
+    const raw: unknown = loaded.data.mistakePatterns;
+    const valid = Array.isArray(raw) ? raw.filter(isValidMistakePattern) : [];
+    const patterns = trackMistakes(loaded.data.attempts, valid);
+    const byId = new Map(patterns.map((pattern) => [pattern.id, pattern]));
+    const damaged =
+      raw !== undefined &&
+      (!Array.isArray(raw) ||
+        valid.length !== raw.length ||
+        valid.length !== patterns.length ||
+        valid.some((pattern) => {
+          const rebuilt = byId.get(pattern.id);
+          return (
+            !rebuilt ||
+            rebuilt.incorrectCount !== pattern.incorrectCount ||
+            rebuilt.lastIncorrectAt !== pattern.lastIncorrectAt
+          );
+        }) ||
+        new Set(valid.map((pattern) => pattern.id)).size !== valid.length);
+    return {
+      ...loaded,
+      data:
+        raw !== undefined || patterns.length
+          ? { ...loaded.data, mistakePatterns: patterns }
+          : loaded.data,
+      warning:
+        loaded.warning ??
+        (damaged
+          ? 'Some saved mistake patterns were rebuilt from your practice history.'
+          : null),
+    };
+  }
+  let history = readHistory();
   const discardedSessions = new Set<string>();
   function write<T>(category: Category, loaded: Loaded<T>): Loaded<T> {
     if (loaded.readOnly) return loaded;
@@ -118,6 +152,7 @@ export function createStorageService(
   return {
     getSettings: () => copy(settings.data),
     getHistory: () => copy(history.data),
+    getMistakePatterns: () => copy(history.data.mistakePatterns ?? []),
     getWarning: () =>
       [...new Set([settings.warning, history.warning].filter(Boolean))].join(
         ' ',
@@ -138,11 +173,7 @@ export function createStorageService(
     },
     saveSession(state: PracticeSessionState) {
       // Merge the latest disk snapshot so sequential writes from another tab are retained.
-      const disk = read<PracticeHistory>(
-        'history',
-        { sessions: [], attempts: [] },
-        isValidHistory,
-      );
+      const disk = readHistory();
       if (disk.readOnly) {
         history = { ...history, readOnly: true, warning: disk.warning };
         return;
@@ -204,14 +235,16 @@ export function createStorageService(
         };
         return;
       }
+      // One envelope commits answers and their patterns together, including quota retries.
+      const previous =
+        disk.data.mistakePatterns ?? history.data.mistakePatterns ?? [];
+      Object.assign(data, {
+        mistakePatterns: trackMistakes(data.attempts, previous),
+      });
       history = write('history', { ...history, data });
     },
     resetHistory() {
-      const disk = read<PracticeHistory>(
-        'history',
-        { sessions: [], attempts: [] },
-        isValidHistory,
-      );
+      const disk = readHistory();
       if (disk.readOnly || history.readOnly) {
         history = { ...history, warning: disk.warning ?? history.warning };
         return false;

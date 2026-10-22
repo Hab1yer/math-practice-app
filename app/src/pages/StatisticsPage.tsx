@@ -183,7 +183,7 @@ export default function StatisticsPage() {
         <ConfirmationDialog
           idPrefix="reset-statistics"
           title="Reset statistics?"
-          description="Are you sure you want to erase all practice history and statistics? This cannot be undone. Any current session will be discarded. Your settings will stay the same."
+          description="Are you sure you want to erase all practice history, saved mistakes and statistics? This cannot be undone. Any current session will be discarded. Your settings will stay the same."
           cancelLabel="Keep history"
           confirmLabel="Erase practice history"
           onCancel={() => setConfirmReset(false)}

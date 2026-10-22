@@ -51,13 +51,23 @@ Completed sessions show attempted/correct/incorrect totals, rounded self-reporte
 
 ## Browser storage
 
-`src/services/storageService.ts` wraps localStorage. Two app-owned keys hold independent versioned envelopes: `mathPractice.settings` contains the full AppSettings contract, and `mathPractice.history` contains sessions and attempts together. Each has `{version: 1, data: ...}`. A single history write keeps attempts and totals consistent if a write fails. Session records save at start, after each report and at ending; unfinished records have no completion timestamp and do not restore active cards.
+`src/services/storageService.ts` wraps localStorage. Two app-owned keys hold independent versioned envelopes: `mathPractice.settings` contains the full AppSettings contract, and `mathPractice.history` contains sessions, attempts and mistake patterns together. Each has `{version: 1, data: ...}`. A single history write keeps attempts, totals and patterns consistent if a write fails. Session records save at start, after each report and at ending; unfinished records have no completion timestamp and do not restore active cards.
 
 The initial migration accepts validated unversioned/version-0 records, and upgrades the envelope on the next write. Unsupported newer versions are preserved with writes paused for that category. Invalid JSON or records default only the affected category in memory and show a notice; subsequent valid actions can replace that category. No unrelated keys are removed. Runtime checks validate complete settings, arithmetic/difficulty, IDs/timestamps, count consistency, duplicate records and session-attempt relationships.
 
 Storage access, read and write failures are caught. Capacity failure preserves the previous disk snapshot and new in-memory results, warns the user and retries on a later save. Settings failures do not block history saving, or vice versa. The store exposes defensive copies and a recent-session reader (50 by default, at most 100, newest first). Full history remains retained rather than silently deleting attempts; long-term archiving/usage measurement remains Phase 21. Sequential writes merge the latest stored history and preserve newer totals; simultaneous cross-tab writes are not transactional and are not claimed to be solved by localStorage.
 
 Saved history loads into a dedicated React Context for recaps and statistics. Settings controls persist their selected values; fields for later mastery/feedback features remain validated/stored with defaults until their UI is implemented. The active question, card selection and reveal state are not stored yet.
+
+## Mistake tracking
+
+`src/services/mistakeTracking.ts` groups self-reported incorrect attempts by operation, difficulty and ordered operands. The JSON tuple forms a stable ID. Reversed addition/multiplication facts remain distinct stored patterns; generating related/reversed practice belongs to Phase 13. Selected-answer equality does not override the child's report. Each pattern stores both operands, correct answer, difficulty, incorrect count, latest incorrect timestamp, similar-correct count (initially zero) and mastered (initially false).
+
+Patterns reconcile against unique saved attempt IDs, so repeated callbacks, session ending, stale snapshots and reloads do not count the same answer twice. An additional miss resets similar-correct progress and mastery, including when reports share a timestamp. An unchanged pattern retains its validated progress; correct-review progress and mastery advancement remain later-phase work.
+
+Patterns are an optional additive field in the version-1 history envelope. Startup backfills older histories in memory without writing; the next valid session save persists them. Pattern validation checks arithmetic/difficulty, ID, timestamp and counts. Invalid, duplicate, missing or inconsistent pattern records are rebuilt from valid answers with a friendly notice, without discarding those answers. Unsupported future history versions stay protected. The store exposes defensive pattern copies through `getMistakePatterns()`; there is no separate pattern write that could succeed while its answer fails.
+
+Reset Statistics and Clear All Application Data clear these patterns together with history. Reset confirmation explicitly names saved mistakes. Stale-session protection also prevents erased patterns from returning. Review remains disabled with a coming-soon message until Phase 14; no pattern dashboard is introduced in this phase.
 
 ## Statistics and reset
 

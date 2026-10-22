@@ -79,7 +79,7 @@ export default function PracticeSetupPage() {
             </label>
           </div>
           <p id="review-hint" className="field-hint">
-            No mistakes to review yet. Start with regular practice.
+            Mistake review is coming soon. Start with regular practice.
           </p>
         </fieldset>
         <div className="setup-footer">
